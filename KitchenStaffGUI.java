@@ -1,4 +1,5 @@
-package GUI;
+package KitchenStaff;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -18,9 +19,8 @@ import javax.swing.*;
 import javax.swing.border.Border;
 
 import ADT.*;
-import Handlers.*;
 public class KitchenStaffGUI  extends JFrame implements ActionListener {
-	public Table table1=new Table(1,null,true);
+
 	
 	private JFrame frame;
 	private JTable StockTable;
