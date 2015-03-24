@@ -11,6 +11,7 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Vector;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -58,8 +59,8 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		MessageScroll();
 		InventoryScroll();
 		ScrollCurrentOrder();
-		IHandler.QueryIngredient();
-		FillInventory(IHandler.AllIngredient);
+		
+		FillInventory(IHandler.IngredientList);
 		FillCurrentOrder();
 		FillWaitingOrders();
 	
@@ -396,20 +397,20 @@ private void MessageScroll()
 		}
 		
 	}
-	private void FillInventory(Ingredient test[])
+	private void FillInventory(Ingredient ingredientList[])
 	{
 		
 		DefaultTableModel ModelInven=(DefaultTableModel)StockTable.getModel();
 		int rowtemp=0;
-		for(int i=0;i<test.length;i++)
+		for(int i=0;i<ingredientList.length;i++)
 		{
-			if(i!=test.length-1)
+			if(i!=ingredientList.length-1)
 			{
 				ModelInven.addRow(new Object[][]{
 					{null, null},});
 			}
-			ModelInven.setValueAt(test[i].name,rowtemp,0);
-			ModelInven.setValueAt(test[i].count,rowtemp,1);
+			ModelInven.setValueAt(ingredientList[i].name,rowtemp,0);
+			ModelInven.setValueAt(ingredientList[i].count,rowtemp,1);
 			rowtemp++;
 		}
 		btnLogout.setVisible(true);
