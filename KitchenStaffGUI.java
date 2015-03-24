@@ -23,7 +23,6 @@ import ADT.*;
 import Login.LoginWindow;
 public class KitchenStaffGUI  extends JFrame implements ActionListener {
 
-	
 	private JFrame frame;
 	private JTable StockTable;
 	private JTable MessageTable;
@@ -41,6 +40,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	public KitchenStaffGUI()
 	{	
 		initialize();
+		
 	}
 	
 	public void initialize()
@@ -62,10 +62,6 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		FillInventory(IHandler.AllIngredient);
 		FillCurrentOrder();
 		FillWaitingOrders();
-		
-		//Adding the Logout Button
-		JButton btnLogout = new JButton("Logout");
-		btnLogout.setBounds(302, 34, 124, 37);
 	
 	}
 	
@@ -311,14 +307,15 @@ private void MessageScroll()
 	private void Logout()
 	{
 		 btnLogout = new JButton("Logout");
+		 btnLogout.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent e){
+					new LoginWindow();
+					//parent.setVisible(false);
+					frame.dispose();
+				}
+			});
 		btnLogout.setBounds(302, 34, 124, 37);
 		frame.getContentPane().add(btnLogout);
-		btnLogout.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				new LoginWindow();
-				dispose();
-			}
-		});
 	}
 // Filling the ScrollViews.
 	
