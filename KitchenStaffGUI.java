@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -257,9 +258,15 @@ private void MessageScroll()
 					}
 					else
 					{
-						MoveWaitingtoCurrent();
-					}
-				}
+						try {
+							MoveWaitingtoCurrent();
+						} 
+						catch (IndexOutOfBoundsException e1)
+						{
+							JOptionPane.showMessageDialog(frame, "No more orders available.");
+						}
+					}}	
+
 				else
 				{
 					ModelCurr.removeRow(0);
@@ -396,12 +403,15 @@ private void MessageScroll()
 
 	}
 //Fill in the order from the waiting queue to the current order queue after the current order is done.
+	
 private void MoveWaitingtoCurrent()
 {
 	int rowtemp=0;
+	int tableid=-1;
 	ModelOrders=(DefaultTableModel)OrdersTable.getModel();
-
-	int tableid=(Integer) ModelOrders.getValueAt(0,0);
+	if(ModelOrders.getRowCount()>0)
+	{
+		tableid=(Integer) ModelOrders.getValueAt(0,0);
 	
 	while(tableid==(Integer) ModelOrders.getValueAt(0,0))
 	{
@@ -411,13 +421,13 @@ private void MoveWaitingtoCurrent()
 		ModelCurr.setValueAt(ModelOrders.getValueAt(0,2),rowtemp,2);
 		ModelCurr.setValueAt(ModelOrders.getValueAt(0,3),rowtemp,3);
 		ModelOrders.removeRow(0);
-
 		rowtemp++;
 		if(tableid==(Integer) ModelOrders.getValueAt(0,0))
 		{
 			ModelCurr.addRow(new Object[][] {
 				{null, null, null, null}});
 		}
+	}
 	}
 	
 	
