@@ -20,6 +20,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 
 import ADT.*;
+import Login.LoginWindow;
 public class KitchenStaffGUI  extends JFrame implements ActionListener {
 
 	
@@ -36,6 +37,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	public IngredientHandler IHandler=new IngredientHandler();
 	DefaultTableModel ModelCurr;
 	DefaultTableModel ModelOrders;
+	
 	public KitchenStaffGUI()
 	{	
 		initialize();
@@ -46,7 +48,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		frame = new JFrame("KitchenStaff");
 		frame.setResizable(false);
 		frame.setSize(750,650);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setVisible(true);
 		EmergButtonInterface();
@@ -230,6 +232,7 @@ private void MessageScroll()
 		StockPanel.setViewportView(StockTable);
 	}
 	
+	/*
 	public static void main(String[] args) 
 	{
 
@@ -240,6 +243,8 @@ private void MessageScroll()
 		
 
 	}
+	*/
+	
 	private void ReadyButtonInterface()
 	{
 
@@ -308,7 +313,12 @@ private void MessageScroll()
 		 btnLogout = new JButton("Logout");
 		btnLogout.setBounds(302, 34, 124, 37);
 		frame.getContentPane().add(btnLogout);
-		btnLogout.setVisible(false);
+		btnLogout.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				new LoginWindow();
+				dispose();
+			}
+		});
 	}
 // Filling the ScrollViews.
 	
