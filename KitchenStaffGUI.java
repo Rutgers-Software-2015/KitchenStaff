@@ -33,8 +33,6 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	private JButton OrderReadyButton;
 	private JButton btnLogout;
 	private Order temp;
-	public KitchenStaffHandler KS=new KitchenStaffHandler();
-	public IngredientHandler IHandler=new IngredientHandler();
 	DefaultTableModel ModelCurr;
 	DefaultTableModel ModelOrders;
 	
@@ -60,7 +58,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		InventoryScroll();
 		ScrollCurrentOrder();
 		
-		FillInventory(IHandler.IngredientList);
+		FillInventory(IngredientHandler.IngredientList);
 		FillCurrentOrder();
 		FillWaitingOrders();
 	
