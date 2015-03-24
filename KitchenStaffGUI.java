@@ -270,7 +270,15 @@ private void MessageScroll()
 
 				else
 				{
-					ModelCurr.removeRow(0);
+					try {
+
+						ModelCurr.removeRow(0);
+					} 
+					catch (IndexOutOfBoundsException e1)
+					{
+						JOptionPane.showMessageDialog(frame, "All orders completed.");
+					}
+					
 					
 				}
 				
