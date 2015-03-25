@@ -70,16 +70,10 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		Waiting.add(test.table5);
 		Waiting.add(test.table4);
 		
-		System.out.println(Waiting.peek().TABLE_ID);
+//		KitchenStaffHandler.DisplayCurrentOrder();
+//		System.out.println(KitchenStaffHandler.WaitQueueOrder.peek().TABLE_ID);
 		
-		
-		
-		
-		
-		
-		
-		
-		
+
 		EmergButtonInterface();
 		Logout();	
 		ReadyButtonInterface();
@@ -88,7 +82,8 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		InventoryScroll();
 		ScrollCurrentOrder();
 
-
+//		KitchenStaffHandler test3=new KitchenStaffHandler();
+		System.out.println(KitchenStaffHandler.WaitQueueOrder.peek());
 		FillInventory(IngredientHandler.IngredientList,true);
 		FillCurrentOrder();
 		FillWaitingOrders();
