@@ -1,5 +1,6 @@
 package KitchenStaff;
 
+import java.util.LinkedList;
 import java.util.Queue;
 
 import ADT.*;
@@ -13,9 +14,10 @@ import ADT.*;
 public class KitchenStaffHandler 
 {
 	
-	public Queue<Order> CurrentOrder;
-	public Queue<TableOrder> WaitQueueOrder;
+	public static Queue<Order> CurrentOrder;
+	public static Queue<TableOrder> WaitQueueOrder;
 	private Employee current;
+	public static int TABLE_ID;
 	// make the communicator
 	/*
 	 * The function below sends the message to a particular employee.
@@ -80,14 +82,24 @@ public class KitchenStaffHandler
 		WaitQueueOrder.remove();                  //Remove items from the waiting orders
 		return true;
 	}
-	public void ViewOrderQueue()
+	public  KitchenStaffHandler()
 	{
-		
-
+//		CurrentOrder=new LinkedList<Order>();
+//		WaitQueueOrder=new LinkedList<TableOrder>();
 	}
-	public void DisplayCurrentOrder()
+	public static void DisplayCurrentOrder()
 	{
+
+//		while(!ExampleOrders.table1.FullTableOrder.isEmpty())
+//		{
+//			KitchenStaffHandler.CurrentOrder.add(ExampleOrders.table1.FullTableOrder.peek());
+//			ExampleOrders.table1.FullTableOrder.remove();
+//			KitchenStaffHandler.TABLE_ID=ExampleOrders.table1.TABLE_ID;
+//		}
 		
-		
+		WaitQueueOrder.add(ExampleOrders.table2);
+		WaitQueueOrder.add(ExampleOrders.table3);
+		WaitQueueOrder.add(ExampleOrders.table5);
+		WaitQueueOrder.add(ExampleOrders.table4);
 	}
 }

@@ -35,6 +35,8 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	private Order temp;
 	DefaultTableModel ModelCurr;
 	DefaultTableModel ModelOrders;
+	public Queue<Order> Current;
+	public Queue<TableOrder> Waiting;
 	
 	public KitchenStaffGUI()
 	{	
@@ -44,12 +46,40 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	
 	public void initialize()
 	{
+		
+		
 		frame = new JFrame("KitchenStaff");
 		frame.setResizable(false);
 		frame.setSize(750,650);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setVisible(true);
+		
+		Current=new LinkedList <Order>();
+		Waiting=new LinkedList <TableOrder>();
+		
+		ExampleOrders test=new ExampleOrders();
+		while(!test.table1.FullTableOrder.isEmpty())
+		{
+			Current.add(test.table1.FullTableOrder.peek());
+			test.table1.FullTableOrder.remove();
+		}
+
+		Waiting.add(test.table2);
+		Waiting.add(test.table3);
+		Waiting.add(test.table5);
+		Waiting.add(test.table4);
+		
+		System.out.println(Waiting.peek().TABLE_ID);
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		EmergButtonInterface();
 		Logout();	
 		ReadyButtonInterface();
@@ -57,8 +87,9 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		MessageScroll();
 		InventoryScroll();
 		ScrollCurrentOrder();
-		
-		FillInventory(IngredientHandler.IngredientList);
+
+
+		FillInventory(IngredientHandler.IngredientList,true);
 		FillCurrentOrder();
 		FillWaitingOrders();
 	
@@ -81,7 +112,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			}
 		) {
 			Class[] columnTypes = new Class[] {
-				Integer.class, Object.class, Integer.class, String.class
+				Integer.class, MenuItem.class, Integer.class, String.class
 			};
 			public Class getColumnClass(int columnIndex) {
 				return columnTypes[columnIndex];
@@ -122,7 +153,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			}
 		) {
 			Class[] columnTypes = new Class[] {
-					Integer.class, Object.class, Integer.class, String.class
+					Integer.class, MenuItem.class, Integer.class, String.class
 			};
 			public Class getColumnClass(int columnIndex) {
 				return columnTypes[columnIndex];
@@ -248,12 +279,27 @@ private void MessageScroll()
 		OrderReadyButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
-				ModelCurr=(DefaultTableModel)CurrentOrder.getModel();
 				
+				ModelCurr=(DefaultTableModel)CurrentOrder.getModel();
+				String test="";
+				try {
+					test=(String) ModelCurr.getValueAt(0, 1);
+					int id=MenuItem.getId(test);
+					InventoryFix(id,(Integer) ModelCurr.getValueAt(0,2));
+				} 
+				catch (IndexOutOfBoundsException e1)
+				{
+					JOptionPane.showMessageDialog(frame, "No more orders available.");
+				}
+				
+			
 				if(ModelCurr.getRowCount()==1)
 				{
+					
+					
 					if(ModelOrders.getRowCount()==0)
 					{
+					
 						ModelCurr.removeRow(0);
 					}
 					else
@@ -330,19 +376,19 @@ private void MessageScroll()
 	private void FillCurrentOrder()
 	{
 		ModelCurr=(DefaultTableModel)CurrentOrder.getModel();
-		ExampleOrders test=new ExampleOrders();
 		int rowtemp=0;
 	
-		while(!test.table1.FullTableOrder.isEmpty())
+		while(!Current.isEmpty())
 		{
-			Order ordertemp=test.table1.FullTableOrder.peek();
-			ModelCurr.setValueAt(test.table1.TABLE_ID, rowtemp, 0);
+			Order ordertemp=Current.peek();
+			ModelCurr.setValueAt(1, rowtemp, 0);
+			
 			ModelCurr.setValueAt(ordertemp.item.STRING_ID, rowtemp, 1);
 			ModelCurr.setValueAt(ordertemp.Quantity, rowtemp, 2);
 			ModelCurr.setValueAt(ordertemp.Spc_Req, rowtemp, 3);
 			rowtemp++;
-			test.table1.FullTableOrder.remove();
-			if(!test.table1.FullTableOrder.isEmpty())
+			Current.remove();
+			if(!Current.isEmpty())
 			{
 				ModelCurr.addRow(new Object[][] {
 						{null, null, null, null}});
@@ -359,13 +405,14 @@ private void MessageScroll()
 //		TableOrder temp2=test2.table5;
 		int rowtemp2=0;
 
-		Queue<TableOrder> temp = new LinkedList<TableOrder>();
+		Queue<TableOrder> temp = Waiting;
+//		
+//		
+//		temp.add(test2.table2);
+//		temp.add(test2.table3);
+//		temp.add(test2.table4);
+//		temp.add(test2.table5);
 		
-		
-		temp.add(test2.table2);
-		temp.add(test2.table3);
-		temp.add(test2.table4);
-		temp.add(test2.table5);
 		while(!temp.isEmpty())
 		{
 		
@@ -395,14 +442,14 @@ private void MessageScroll()
 		}
 		
 	}
-	private void FillInventory(Ingredient ingredientList[])
+	private void FillInventory(Ingredient ingredientList[],boolean moreinven)
 	{
 		
 		DefaultTableModel ModelInven=(DefaultTableModel)StockTable.getModel();
 		int rowtemp=0;
 		for(int i=0;i<ingredientList.length;i++)
 		{
-			if(i!=ingredientList.length-1)
+			if(i!=ingredientList.length-1 &(moreinven))
 			{
 				ModelInven.addRow(new Object[][]{
 					{null, null},});
@@ -446,7 +493,17 @@ private void MoveWaitingtoCurrent()
 	
 	
 }
-	
+	private void InventoryFix(int Menu_ID,int quantity)
+	{
+		MenuItem temp = new MenuItem(Menu_ID);
+		
+		Ingredient temp1[]=temp.ings;
+		for(int i=0;i<temp1.length;i++)
+		{
+			IngredientHandler.UpdateInventory(temp1[i],quantity*-1);
+		}
+		FillInventory(IngredientHandler.IngredientList,false);
+	}
 	
 	
 	
