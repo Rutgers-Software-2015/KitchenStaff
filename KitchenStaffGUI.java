@@ -65,9 +65,6 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			test.table1.FullTableOrder.remove();
 		}
 
-		Ingredient temp=IngredientHandler.FindInventory("Melons");
-		IngredientHandler.UpdateInventory(temp, 250);
-
 		Waiting.add(test.table2);
 		Waiting.add(test.table3);
 		Waiting.add(test.table5);
