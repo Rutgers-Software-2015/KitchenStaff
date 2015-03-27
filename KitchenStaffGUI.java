@@ -65,15 +65,18 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			test.table1.FullTableOrder.remove();
 		}
 
+		Ingredient temp=IngredientHandler.FindInventory("Melons");
+		IngredientHandler.UpdateInventory(temp, 250);
+
 		Waiting.add(test.table2);
 		Waiting.add(test.table3);
 		Waiting.add(test.table5);
 		Waiting.add(test.table4);
-		
-//		KitchenStaffHandler.DisplayCurrentOrder();
-//		System.out.println(KitchenStaffHandler.WaitQueueOrder.peek().TABLE_ID);
-		
-
+		while(!KitchenStaffHandler.WaitQueueOrder.isEmpty())
+		{
+			Waiting.add(KitchenStaffHandler.WaitQueueOrder.peek());
+			KitchenStaffHandler.WaitQueueOrder.remove();
+		}
 		EmergButtonInterface();
 		Logout();	
 		ReadyButtonInterface();
@@ -81,9 +84,6 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		MessageScroll();
 		InventoryScroll();
 		ScrollCurrentOrder();
-
-//		KitchenStaffHandler test3=new KitchenStaffHandler();
-		System.out.println(KitchenStaffHandler.WaitQueueOrder.peek());
 		FillInventory(IngredientHandler.IngredientList,true);
 		FillCurrentOrder();
 		FillWaitingOrders();
