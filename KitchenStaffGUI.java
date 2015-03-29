@@ -1,5 +1,8 @@
 package KitchenStaff;
-
+/**
+ * This .java file creates the gui for the KitchenStaff.
+ * author Rahul Tandon
+ **/
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -37,16 +40,21 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	DefaultTableModel ModelOrders;
 	public Queue<Order> Current;
 	public Queue<TableOrder> Waiting;
-	
+	/*
+	 * Initializes the KitchenStaffGUI.
+	 * @returns nothing.
+	 */
 	public KitchenStaffGUI()
 	{	
 		initialize();
 		
 	}
-	
+	/*
+	 * Used to initialize the Kitchen GUI:
+	 *  @returns nothing
+	 */
 	public void initialize()
 	{
-		
 		
 		frame = new JFrame("KitchenStaff");
 		frame.setResizable(false);
@@ -86,7 +94,10 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		FillWaitingOrders();
 	
 	}
-	
+	/*
+	 * This function creates the current Order in the top right ScrollView. 
+	 *  @returns nothing. 
+	 */
 	private void ScrollCurrentOrder()
 	{
 		JScrollPane CurrentOrderPanel = new JScrollPane();
@@ -128,7 +139,10 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	}
 
 
-	
+	/*
+	 * Fills the bottom right ScrollView  with the waiting Orders from each table.
+	 * @return nothing.
+	 */
 	private void ScrollOrders()
 	{
 		JScrollPane OrderPanel = new JScrollPane();
@@ -171,6 +185,10 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		OrderPanel.setVisible(true);
 	
 	}
+	/*
+	 * Creates the bottom right ScrollView  with the waiting Orders from each table.
+	 * @return nothing.
+	 */
 private void MessageScroll()
 {
 	JScrollPane MessagesPanel = new JScrollPane();
@@ -208,7 +226,10 @@ private void MessageScroll()
 	MessageTable.getColumnModel().getColumn(1).setPreferredWidth(70);
 	MessagesPanel.setViewportView(MessageTable);
 }
-
+/*
+ * Creates the top left ScrollView  with the current Inventory.
+ * @returns nothing.
+ */
 	private void InventoryScroll()
 	{
 		Table table1=new Table(1,null,true);
@@ -250,19 +271,11 @@ private void MessageScroll()
 		StockPanel.setViewportView(StockTable);
 	}
 	
+
 	/*
-	public static void main(String[] args) 
-	{
-
-		KitchenStaffGUI window = new KitchenStaffGUI();	
-
-		window.initialize();
-
-		
-
-	}
-	*/
-	
+	 * Creates the ready button in the KitchenStaff GUI.
+	 * @return nothing.
+	 */	
 	private void ReadyButtonInterface()
 	{
 
@@ -327,6 +340,11 @@ private void MessageScroll()
 		frame.getContentPane().add(OrderReadyButton);
 		OrderReadyButton.setVisible(false);
 	}
+
+	/*
+	 * Creates the emergency button in the KitchenStaff GUI.
+	 * @return nothing.
+	 */	
 	private void EmergButtonInterface()
 	{
 		EmergButton = new JButton("Emergency");
@@ -349,6 +367,10 @@ private void MessageScroll()
 		EmergButton.setVisible(false);
 	}
 
+	/*
+	 * Creates the logout button in the KitchenStaff GUI.
+	 * @return nothing.
+	 */	
 	private void Logout()
 	{
 		 btnLogout = new JButton("Logout");
@@ -362,7 +384,10 @@ private void MessageScroll()
 		btnLogout.setBounds(302, 34, 124, 37);
 		frame.getContentPane().add(btnLogout);
 	}
-// Filling the ScrollViews.
+	/*
+	 * This function fills the current Order in the top right ScrollView.The ScrollViews contains all the items from the current TableOrder. 
+	 *  @returns nothing. 
+	 */
 	
 	
 	private void FillCurrentOrder()
@@ -434,6 +459,10 @@ private void MessageScroll()
 		}
 		
 	}
+	/*
+	 * This function fills the Inventory in the top left ScrollView.The ScrollViews contains all the Ingredients.
+	 *  @returns nothing. 
+	 */
 	private void FillInventory(Ingredient ingredientList[],boolean moreinven)
 	{
 		
@@ -455,7 +484,12 @@ private void MessageScroll()
 		OrderReadyButton.setVisible(true);
 
 	}
-//Fill in the order from the waiting queue to the current order queue after the current order is done.
+	
+	/*
+	 * This function fills moves the first TableOrder in the Waiting Queue to the Current Order Queue once the Current Order is done.
+	 *  @returns nothing. 
+	 */
+
 	
 private void MoveWaitingtoCurrent()
 {
@@ -485,15 +519,16 @@ private void MoveWaitingtoCurrent()
 	
 	
 }
+/*
+ * As items are completed this function updates our inventory
+ */
 	private void InventoryFix(int Menu_ID,int quantity)
 	{
 		MenuItem temp = new MenuItem(Menu_ID);
 		
 		Ingredient temp1[]=temp.ings;
-		for(int i=0;i<temp1.length;i++)
-		{
-			IngredientHandler.UpdateInventory(temp1[i],quantity*-1);
-		}
+
+		KitchenStaffHandler.UpdateInventory(temp1,quantity);
 		FillInventory(IngredientHandler.IngredientList,false);
 	}
 	

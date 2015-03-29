@@ -9,7 +9,7 @@ import ADT.*;
  * 
  * @author Rahul Tandon
  *
- */
+ **/
 
 public class KitchenStaffHandler 
 {
@@ -50,16 +50,22 @@ public class KitchenStaffHandler
 		
 		return true;
 	}
-	public String CheckInventory()
-	{
-		/*
-		 * Access Database to read out inventory
-		 */
-		String InventoryStatus=" "; //Use the database to get this info
-		return InventoryStatus;	
-	}
 	/*
-	 * Remove completed order and notify waiter to pick it up.
+ 	* Updates the current Inventory stock.
+ 	* @return TableStock is now updated.	
+ 	*/
+	public static void UpdateInventory(Ingredient I[],int quantity)
+	{
+
+		for(int i=0;i<I.length;i++)
+		{
+			IngredientHandler.UpdateInventory(I[i],quantity*-1);
+		}
+		
+	}
+	
+	/*
+	 * Remove completed order and notify waiter to pick it up. Will be used once communicator created.
 	 */
 	public boolean OrderComplete(Order currentOrder)
 	{  
@@ -73,9 +79,11 @@ public class KitchenStaffHandler
 		}
 		return false;
 	}
+	
 	/*
-	 * Moves next order to Current Order
+	 * Moves next order to Current Order.
 	 */
+	
 	public boolean StartOrder()
 	{
 		CurrentOrder.addAll(WaitQueueOrder.peek().FullTableOrder);// Adds all the orders from the Queue in Table order.
@@ -83,37 +91,21 @@ public class KitchenStaffHandler
 		WaitQueueOrder.remove();                  //Remove items from the waiting orders
 		return true;
 	}
+	
+	/*
+	 * Constructor	
+	 */
 	public KitchenStaffHandler()
 	{
-//		this.CurrentOrder=new LinkedList<Order>();
-//		this.WaitQueueOrder=new LinkedList<TableOrder>();
-//		
-//		WaitQueueOrder.add(ExampleOrders.table2);
-//		WaitQueueOrder.add(ExampleOrders.table3);
-//		WaitQueueOrder.add(ExampleOrders.table5);
-//		WaitQueueOrder.add(ExampleOrders.table4);
-	}
-	public static void DisplayCurrentOrder()
-	{
-
-		WaitQueueOrder.add(ExampleOrders.table2);
-		WaitQueueOrder.add(ExampleOrders.table3);
-		WaitQueueOrder.add(ExampleOrders.table5);
-		WaitQueueOrder.add(ExampleOrders.table4);
-//		WaitQueueOrder.add(ExampleOrders.table2);
-//		WaitQueueOrder.add(ExampleOrders.table3);
-//		WaitQueueOrder.add(ExampleOrders.table5);
-//		WaitQueueOrder.add(ExampleOrders.table4);
-//		while(!ExampleOrders.table1.FullTableOrder.isEmpty())
-//		{
-//			KitchenStaffHandler.CurrentOrder.add(ExampleOrders.table1.FullTableOrder.peek());
-//			ExampleOrders.table1.FullTableOrder.remove();
-//			KitchenStaffHandler.TABLE_ID=ExampleOrders.table1.TABLE_ID;
-//		}
 
 	}
+	/*
+	 * Adds the WaitingOrders to the WaitQueue.
+	 * @return WaitQueueOrder now has a new element added to the end.
+	 */
 	public static void addTableOrder(TableOrder T)
 	{
 		WaitQueueOrder.add(T);
 	}
+
 }
