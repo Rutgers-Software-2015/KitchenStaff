@@ -55,7 +55,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	private GradientPanel backgroundPanel,buttonPanelBackground;
 	private GradientPanel card1,card2,card3;
 	//Swing Objects
-	private GradientButton logOutButton,emergencyButton,SendMessageButton,OrderReadyButton,refundButton;
+	private GradientButton logOutButton,emergencyButton,SendMessageButton,OrderReadyButton,helpButton;
 	private JButton payWithCash,payWithCard;
 	private JLabel titleLabel,dateAndTime;
 	//Other Variables
@@ -114,7 +114,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 
 			
 	// 	Creates the JTable for Waiting Orders	
-			WaitingOrderScroll();
+	//		WaitingOrderScroll();
 	
 	// Creates the JTable for Messages
 			MessageScroll();
@@ -141,7 +141,6 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			KitchenStaffHandler.WaitQueueOrder.remove();
 		}
 		FillCurrentOrder();
-		FillWaitingOrders();
 		FillInventory(IngredientHandler.IngredientList,true);
 		
 		
@@ -246,11 +245,11 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		OrderReadyButton.setFocusPainted(false);
 		
 		// Set Request Refund Button // May edit later
-		refundButton = new GradientButton("Request Refund");
-		refundButton.addActionListener(this);
-		refundButton.setFont(refundButton.getFont().deriveFont(16.0f));
-		refundButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-		refundButton.setFocusPainted(false);
+		helpButton = new GradientButton("Help");
+		helpButton.addActionListener(this);
+		helpButton.setFont(helpButton.getFont().deriveFont(16.0f));
+		helpButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+		helpButton.setFocusPainted(false);
 		
 		// Set Logout Button
 		logOutButton = new GradientButton("Logout");
@@ -262,7 +261,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		buttonPanel.add(emergencyButton);
 		buttonPanel.add(SendMessageButton);
 		buttonPanel.add(OrderReadyButton);
-		buttonPanel.add(refundButton);
+		buttonPanel.add(helpButton);
 		buttonPanel.add(logOutButton);
 	}
 	
@@ -290,29 +289,53 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			}
 		if(a == emergencyButton)
 			{
-				// Use Send Message function to send notification to all employees
+				// Use Send Message function to send notification to all employees.
+			int choice=JOptionPane.showConfirmDialog(null,
+					"Do you want to send an Emergency?", "choose one", JOptionPane.YES_NO_OPTION);
+					switch(choice)
+					{
+					case 1:
+						break;
+					case 0:
+						String msg = JOptionPane.showInputDialog("Please input the message: ");
+						break;
+					}
+				//SendMessage(msg,0); // 0 means all employees
 			}
-		if(a==SendMessageButton)
-			{
-			// show message box with message and employee name. Use communicator to send message.
-			}
+		if(a == SendMessageButton)
+		{
+		//Asks for the message and the id,
+			String msg = JOptionPane.showInputDialog("Please input the message: ");
+			String id = JOptionPane.showInputDialog("Please input the id of the employee: ");
+			int emid=Integer.valueOf(id);
+			
+			//Use sendmessage funtion KSHandler.
+			//SendMessage(msg,emid);
+		}
 		if(a == OrderReadyButton)
 			{
 			// Manager scroll views
 			
 			ModelCurr=(DefaultTableModel)CurrentOrder.getModel();
 			String test="";
+			int rowselected=CurrentOrder.getSelectedRow();
+			int tid=(Integer) ModelCurr.getValueAt(rowselected, 0);// Gets the tableID of order so we can notify waiter.
+			//Send Message("Food is Ready for pick up",tid.employee);  // Need comunicator for this to work.
+			
+			if(rowselected !=-1)
+			{
 			try {
-				test=(String) ModelCurr.getValueAt(0, 1);
+				
+				test=(String) ModelCurr.getValueAt(rowselected, 1);
 				int id=MenuItem.getId(test);
-				InventoryFix(id,(Integer) ModelCurr.getValueAt(0,2));
+				InventoryFix(id,(Integer) ModelCurr.getValueAt(rowselected,2));
 			} 
 			catch (IndexOutOfBoundsException e1)
-			{
+			{	
 				JOptionPane.showMessageDialog(this, "No more orders available.");
 			}
 			
-		
+			
 			if(ModelCurr.getRowCount()==1)
 			{
 				
@@ -320,16 +343,16 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 				if(ModelOrders.getRowCount()==0)
 				{
 				
-					ModelCurr.removeRow(0);
+					ModelCurr.removeRow(rowselected);
 				}
 				else
 				{
 					try {
-						MoveWaitingtoCurrent();
+						//MoveWaitingtoCurrent();
 					} 
 					catch (IndexOutOfBoundsException e1)
 					{
-						JOptionPane.showMessageDialog(this, "No more orders available.");
+					//	JOptionPane.showMessageDialog(this, "No more orders available.");
 					}
 				}}	
 
@@ -337,7 +360,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			{
 				try {
 
-					ModelCurr.removeRow(0);
+					ModelCurr.removeRow(rowselected);
 				} 
 				catch (IndexOutOfBoundsException e1)
 				{
@@ -347,17 +370,34 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 				
 			}
 			
+		   }
+			else
+			{
+				JOptionPane.showMessageDialog(this,"Please select a row.");
+			}
 		}
 			
-		if(a == refundButton)
+		if(a == helpButton)
 			{
-		
-			}
-		if(a == SendMessageButton)
-			{
+				int choice=0;
+				String[] options={"Emergency","Send Message","Order Ready"};
+				choice=JOptionPane.showOptionDialog(new JFrame(), " Which function would you like help with?","Help Button",JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE,null,options,0);
+				switch(choice)
+				{
+					case 0: 
+						JOptionPane.showMessageDialog(this, "After clicking the button. Type in emergency message. It will send it to all the employee.");
+						break;
+					case 1:
+						JOptionPane.showMessageDialog(this, "After clicking the button. Type in message and then employee ID. It will send the message to the employees.");
+						break;
+					case 2:
+						JOptionPane.showMessageDialog(this, "Select the row for the item that was completed. Then click the button.");
+						break;
+				}
 			
-			
+				
 			}
+
 		if(a == timer)
 			{
 				updateClock();
@@ -369,13 +409,13 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	{
 		
 		panel_1 = new JPanel();
-		panel_1.setBorder(new TitledBorder( null, "Current Order", TitledBorder.CENTER, TitledBorder.BELOW_TOP, myFont, new Color(0, 0, 0)));
-		panel_1.setBounds(770, 75, 400, 280);
+		panel_1.setBorder(new TitledBorder( null, "Orders", TitledBorder.CENTER, TitledBorder.BELOW_TOP, myFont, new Color(0, 0, 0)));
+		panel_1.setBounds(770, 75, 400, 580);
 		rootPanel.add(panel_1);
 		panel_1.setLayout(null);
 
 		JScrollPane CurrentOrderPanel = new JScrollPane();
-		CurrentOrderPanel.setBounds(0, 27, 400, 252);
+		CurrentOrderPanel.setBounds(0, 27, 400, 555);
 		panel_1.add(CurrentOrderPanel);
 		
 					
@@ -413,7 +453,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 					CurrentOrderPanel.setViewportView(CurrentOrder);
 		
 	}
-
+/*
 	private void WaitingOrderScroll()
 	{
 		 Font myFont = new Font("SansSerif", Font.PLAIN, 18);
@@ -462,7 +502,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 					OrdersTable.setVisible(true);
 					OrderPanel.setVisible(true);
 	}
-	
+*/	
 	
 
 		private void MessageScroll()
@@ -567,22 +607,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
         dateAndTime.setText(DateFormat.getDateTimeInstance().format(new Date()));
     }
 	
-	/*
-	 * Creates the emergency button in the KitchenStaff GUI.
-	 * @return nothing.
-	 */	
 
-
-	/*
-	 * Creates the logout button in the KitchenStaff GUI.
-	 * @return nothing.
-	 */	
-	
-	/*
-	 * This function fills the current Order in the top right ScrollView.The ScrollViews contains all the items from the current TableOrder. 
-	 *  @returns nothing. 
-	 */
-	
 	
 	private void FillCurrentOrder()
 	{
@@ -603,26 +628,23 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			{
 				ModelCurr.addRow(new Object[][] {
 						{null, null, null, null}});
-
 			}
 			
 		}
+		ModelCurr.addRow(new Object[][] {
+				{null, null, null, null}});
+		FillWaitingOrders(rowtemp);
 		
 	}
-	private void FillWaitingOrders()
+	private void FillWaitingOrders(int temprow)
 	{
-		ModelOrders=(DefaultTableModel)OrdersTable.getModel();
+		ModelOrders=(DefaultTableModel)CurrentOrder.getModel();
 		ExampleOrders test2=new ExampleOrders();
 //		TableOrder temp2=test2.table5;
-		int rowtemp2=0;
+		int rowtemp2=temprow;
 
 		Queue<TableOrder> temp = Waiting;
-//		
-//		
-//		temp.add(test2.table2);
-//		temp.add(test2.table3);
-//		temp.add(test2.table4);
-//		temp.add(test2.table5);
+
 		
 		while(!temp.isEmpty())
 		{
@@ -682,7 +704,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	 *  @returns nothing. 
 	 */
 
-	
+/*	
 private void MoveWaitingtoCurrent()
 {
 	int rowtemp=0;
@@ -711,6 +733,7 @@ private void MoveWaitingtoCurrent()
 	
 	
 }
+*/
 /*
  * As items are completed this function updates our inventory
  */
