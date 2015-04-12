@@ -68,7 +68,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	private JPanel panel_3;
 	private DefaultTableModel ModelCurr,ModelOrders;
 	public Queue<Order> Current;
-	public Queue<TableOrder> Waiting;
+	public Queue<TableOrder> temp;
 	public KitchenStaffGUI()
 	{
 		super();
@@ -108,39 +108,22 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		setTitlePanel();
 		setCardPanel();
 		setButtonPanel();
-		
+		temp=new LinkedList <TableOrder>();
+		//temp=KitchenStaffHandler.WaitQueueOrder;
+	
 	// Creates the Table for Current Orders	
 			CurrentOrderScroll();
 
-			
-	// 	Creates the JTable for Waiting Orders	
-	//		WaitingOrderScroll();
-	
 	// Creates the JTable for Messages
 			MessageScroll();
+			
    // Creates the JTable for Inventory
 			InventoryScroll();
 			
 			
 		setRootPanel();
-		Current=new LinkedList <Order>();
-		Waiting=new LinkedList <TableOrder>();
-		ExampleOrders test=new ExampleOrders();
-		while(!test.table1.FullTableOrder.isEmpty())
-		{
-			Current.add(test.table1.FullTableOrder.peek());
-			test.table1.FullTableOrder.remove();
-		}
-		Waiting.add(test.table2);
-		Waiting.add(test.table3);
-		Waiting.add(test.table5);
-		Waiting.add(test.table4);
-		while(!KitchenStaffHandler.WaitQueueOrder.isEmpty())
-		{
-			Waiting.add(KitchenStaffHandler.WaitQueueOrder.peek());
-			KitchenStaffHandler.WaitQueueOrder.remove();
-		}
-		FillCurrentOrder();
+		FillWaitingOrders();
+	
 		FillInventory(IngredientHandler.IngredientList,true);
 		
 		
@@ -291,7 +274,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			{
 				// Use Send Message function to send notification to all employees.
 			int choice=JOptionPane.showConfirmDialog(null,
-					"Do you want to send an Emergency?", "choose one", JOptionPane.YES_NO_OPTION);
+					"Do you want to send an Emergency?", "Confirmation", JOptionPane.YES_NO_OPTION);
 					switch(choice)
 					{
 					case 1:
@@ -313,69 +296,36 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			//SendMessage(msg,emid);
 		}
 		if(a == OrderReadyButton)
-			{
+		    {
 			// Manager scroll views
-			
-			ModelCurr=(DefaultTableModel)CurrentOrder.getModel();
-			String test="";
-			int rowselected=CurrentOrder.getSelectedRow();
-			int tid=(Integer) ModelCurr.getValueAt(rowselected, 0);// Gets the tableID of order so we can notify waiter.
-			//Send Message("Food is Ready for pick up",tid.employee);  // Need comunicator for this to work.
-			
-			if(rowselected !=-1)
+			if(CurrentOrder.getRowCount()==0)
 			{
-			try {
-				
-				test=(String) ModelCurr.getValueAt(rowselected, 1);
-				int id=MenuItem.getId(test);
-				InventoryFix(id,(Integer) ModelCurr.getValueAt(rowselected,2));
-			} 
-			catch (IndexOutOfBoundsException e1)
-			{	
-				JOptionPane.showMessageDialog(this, "No more orders available.");
+				JOptionPane.showMessageDialog(this, "No orders available.");
+			
 			}
-			
-			
-			if(ModelCurr.getRowCount()==1)
-			{
-				
-				
-				if(ModelOrders.getRowCount()==0)
-				{
-				
-					ModelCurr.removeRow(rowselected);
-				}
-				else
-				{
-					try {
-						//MoveWaitingtoCurrent();
-					} 
-					catch (IndexOutOfBoundsException e1)
-					{
-					//	JOptionPane.showMessageDialog(this, "No more orders available.");
-					}
-				}}	
-
 			else
 			{
-				try {
-
+			ModelCurr=(DefaultTableModel)CurrentOrder.getModel();
+			String test="";
+		
+				try 
+				{
+					int rowselected=CurrentOrder.getSelectedRow();
+					test=(String) ModelCurr.getValueAt(rowselected, 1);
+					int id=MenuItem.getId(test);
+					InventoryFix(id,(Integer) ModelCurr.getValueAt(rowselected,2));
 					ModelCurr.removeRow(rowselected);
+					if(CurrentOrder.getRowCount()==0)
+					{
+						JOptionPane.showMessageDialog(this, "All orders Complete.");
+					}
 				} 
 				catch (IndexOutOfBoundsException e1)
 				{
-					JOptionPane.showMessageDialog(this, "All orders completed.");
+					JOptionPane.showMessageDialog(this, "Please select a row.");
 				}
-				
-				
 			}
-			
-		   }
-			else
-			{
-				JOptionPane.showMessageDialog(this,"Please select a row.");
-			}
-		}
+		    }
 			
 		if(a == helpButton)
 			{
@@ -608,7 +558,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
     }
 	
 
-	
+/*	
 	private void FillCurrentOrder()
 	{
 		ModelCurr=(DefaultTableModel)CurrentOrder.getModel();
@@ -633,41 +583,42 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		}
 		ModelCurr.addRow(new Object[][] {
 				{null, null, null, null}});
-		FillWaitingOrders(rowtemp);
+
 		
 	}
-	private void FillWaitingOrders(int temprow)
+	*/
+	private void FillWaitingOrders()
 	{
 		ModelOrders=(DefaultTableModel)CurrentOrder.getModel();
 		ExampleOrders test2=new ExampleOrders();
 //		TableOrder temp2=test2.table5;
-		int rowtemp2=temprow;
+		int rowtemp2=0;
 
-		Queue<TableOrder> temp = Waiting;
+	
 
 		
-		while(!temp.isEmpty())
+		while(!KitchenStaffHandler.WaitQueueOrder.isEmpty())
 		{
 		
-		while(!temp.peek().FullTableOrder.isEmpty())
+		while(!KitchenStaffHandler.WaitQueueOrder.peek().FullTableOrder.isEmpty())
 		{
-			Order ordertemp2=temp.peek().FullTableOrder.peek();
+			Order ordertemp2=KitchenStaffHandler.WaitQueueOrder.peek().FullTableOrder.peek();
 			
-			ModelOrders.setValueAt(temp.peek().TABLE_ID, rowtemp2, 0);
+			ModelOrders.setValueAt(KitchenStaffHandler.WaitQueueOrder.peek().TABLE_ID, rowtemp2, 0);
 			ModelOrders.setValueAt(ordertemp2.item.STRING_ID, rowtemp2, 1);
 			ModelOrders.setValueAt(ordertemp2.Quantity, rowtemp2, 2);
 			ModelOrders.setValueAt(ordertemp2.Spc_Req, rowtemp2, 3);
 			rowtemp2++;
-			temp.peek().FullTableOrder.remove();
-			if(!temp.peek().FullTableOrder.isEmpty())
+			KitchenStaffHandler.WaitQueueOrder.peek().FullTableOrder.remove();
+			if(!KitchenStaffHandler.WaitQueueOrder.peek().FullTableOrder.isEmpty())
 			{
 				ModelOrders.addRow(new Object[][] {
 						{null, null, null, null}});
 			}
 		}
 
-		temp.remove();
-		if(!temp.isEmpty())
+		KitchenStaffHandler.WaitQueueOrder.remove();
+		if(!KitchenStaffHandler.WaitQueueOrder.isEmpty())
 		{
 			ModelOrders.addRow(new Object[][] {
 				{null, null, null, null}});
@@ -699,10 +650,6 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 
 
 	}
-	/*
-	 * This function fills moves the first TableOrder in the Waiting Queue to the Current Order Queue once the Current Order is done.
-	 *  @returns nothing. 
-	 */
 
 /*	
 private void MoveWaitingtoCurrent()
@@ -734,8 +681,9 @@ private void MoveWaitingtoCurrent()
 	
 }
 */
+	
 /*
- * As items are completed this function updates our inventory
+ * As items are completed this function updates our inventory based off the ingredients for that i
  */
 
 	private void InventoryFix(int Menu_ID,int quantity)
