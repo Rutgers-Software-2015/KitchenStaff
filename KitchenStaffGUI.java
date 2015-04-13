@@ -78,6 +78,14 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 
 	public void init()
 	{
+		//Used for testing till database is fully functioning.
+		ExampleOrders test=new ExampleOrders();
+		KitchenStaffHandler.addTableOrder(test.table2);
+		KitchenStaffHandler.addTableOrder(test.table3);
+		KitchenStaffHandler.addTableOrder(test.table5);
+		KitchenStaffHandler.addTableOrder(test.table4);
+		KitchenStaffHandler.addTableOrder(test.table1);
+		
 		this.setTitle("KitchenStaff Interface");
 		this.setResizable(true);
 		this.setSize(1200,700);
