@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.sql.ResultSet;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.Collections;
@@ -48,6 +49,8 @@ import Shared.Gradients.*;
 import javax.swing.ButtonGroup;
 import javax.swing.border.LineBorder;
 import javax.swing.border.EtchedBorder;
+
+import Shared.Communicator.*;
 public class KitchenStaffGUI  extends JFrame implements ActionListener {
 
 	//Parent Panels
@@ -69,6 +72,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	private DefaultTableModel ModelCurr,ModelOrders;
 	public Queue<Order> Current;
 	public Queue<TableOrder> temp;
+	
 	public KitchenStaffGUI()
 	{
 		super();
@@ -78,6 +82,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 
 	public void init()
 	{
+		
 		//Used for testing till database is fully functioning.
 		ExampleOrders test=new ExampleOrders();
 		KitchenStaffHandler.addTableOrder(test.table2);
@@ -104,7 +109,8 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
                 dispose();
             }
         });
-		
+		KitchenStaffCommunicator test1 = new KitchenStaffCommunicator();
+		test1.getIngredients();
 		this.setVisible(true);
 	}
 
@@ -367,7 +373,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	{
 		
 		panel_1 = new JPanel();
-		panel_1.setBorder(new TitledBorder( null, "Orders", TitledBorder.CENTER, TitledBorder.BELOW_TOP, myFont, new Color(0, 0, 0)));
+		panel_1.setBorder(new TitledBorder( null, "BLAH", TitledBorder.CENTER, TitledBorder.BELOW_TOP, myFont, new Color(0, 0, 0)));
 		panel_1.setBounds(770, 75, 400, 580);
 		rootPanel.add(panel_1);
 		panel_1.setLayout(null);
@@ -703,8 +709,28 @@ private void MoveWaitingtoCurrent()
 		KitchenStaffHandler.UpdateInventory(temp1,quantity);
 		FillInventory(IngredientHandler.IngredientList,false);
 	}
-
-
 	
+	/*
+	public boolean isThereInternet()
+	{
+		try
+		{
+			URL yourl = new URL("http://google.com");
+			HttpURLConnection yourlConnect = (HttpURLConnection)yourl.openConnection();
+			yourlConnect.setConnectTimeout(2000);
+			
+			Object objData = yourlConnect.getContent();
+		}catch(UnknownHostException e)
+		{
+			return false;
+		}
+		catch(IOException e)
+		{
+			return false;
+		}
+		return true;
+	}
+
+	*/
 
 }

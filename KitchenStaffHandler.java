@@ -1,9 +1,11 @@
 package KitchenStaff;
 
+import java.sql.ResultSet;
 import java.util.LinkedList;
 import java.util.Queue;
 
 import Shared.ADT.*;
+import Shared.Communicator.DatabaseCommunicator;
 
 /**
  * 
@@ -107,5 +109,5 @@ public class KitchenStaffHandler
 	{
 		WaitQueueOrder.add(T);
 	}
-
+	
 }
