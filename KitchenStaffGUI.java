@@ -222,7 +222,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		            timer.setCoalesce(true);
 		            timer.setInitialDelay(0);
 		            timer.start();
-		        	timer3 = new Timer(6000,this);
+		        	timer3 = new Timer(60000,this);
 		            timer3.setRepeats(true);
 		            timer3.setCoalesce(true);
 		            timer3.setInitialDelay(0);
@@ -349,7 +349,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			else
 			{
 			ModelCurr=(DefaultTableModel)CurrentOrder.getModel();
-			String test="";
+
 		
 				try 
 				{
@@ -359,11 +359,10 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 					
 					int idloc= 7*(rowselected)+5;           //Gets location of MENUID
 					int MenuID=Integer.parseInt(temp[idloc]); // Gets the MENUID value
-					int rowid=Integer.parseInt(temp[7*(rowselected)+6]);
+					int rowid=Integer.parseInt(temp[7*(rowselected)+6]); //gets row id of order
 					String qs=(String) CurrentOrder.getValueAt(rowselected, 2);
 					int q=Integer.parseInt(qs);
-					JOptionPane.showMessageDialog(this,"THIS IS THE MENUID"+MenuID);
-					int i=0;
+	
 					
 					String[] IngList=temptest.getMenuItemIngredients(MenuID,rowid);
 			
@@ -675,14 +674,12 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		ModelOrders=(DefaultTableModel)CurrentOrder.getModel();
 		KitchenStaffCommunicator KC=new KitchenStaffCommunicator();
 		String[] Orders=KC.getTableOrders();
-		int rows=Orders.length/6 -1;
+		int rows=Orders.length/7;
 		int rowtemp2=0;
 		
 		for(int i=0;i<Orders.length;i++)
-		{
-				
-	
-			
+		{	
+		
 			ModelOrders.setValueAt(Orders[i], rowtemp2, 0);
 			i++;
 			ModelOrders.setValueAt(Orders[i], rowtemp2, 1);
@@ -692,11 +689,21 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			ModelOrders.setValueAt(Orders[i], rowtemp2, 3);
 			i+=3;
 			rowtemp2++;
-			if(ModelOrders.getRowCount()-1<rows)
+			if(ModelOrders.getRowCount()<rows)
 			{
 				ModelOrders.addRow(new Object[][] {
 						{null, null, null, null}});
 			}
+			
+			
+		}
+	
+		// delete the other rows that were already filled.
+		int rowsnow= Orders.length/7;
+		int oldrowcount=ModelOrders.getRowCount();
+		for(int i=rowsnow;i<oldrowcount;i++)
+		{
+			ModelOrders.removeRow(i);
 		}
 		
 	}

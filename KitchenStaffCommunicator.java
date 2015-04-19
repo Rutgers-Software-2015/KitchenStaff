@@ -176,6 +176,10 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			String[] IngList=ParseIngredients(I);
 			String sqlcommand="UPDATE TABLE_ORDER set CURRENT_STATUS ='READY' where rowid="+rowid+";"; 
 			this.update(sqlcommand);
+			String notifyemployeecmnd="SELECT EMPLOYEE_ID FROM TABLE_ORDER where rowid=" +rowid+";";
+			ResultSet e=this.tell(notifyemployeecmnd);
+			int employeeid=e.getInt("EMPLOYEE_ID");
+			//SEND MESSAGE TO EMPLOYEE will work on later.
 			this.disconnect();
 			return IngList;
 			}
