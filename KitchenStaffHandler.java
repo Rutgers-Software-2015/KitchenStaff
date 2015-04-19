@@ -82,18 +82,7 @@ public class KitchenStaffHandler
 		return false;
 	}
 	
-	/*
-	 * Moves next order to Current Order.
-	 */
-	
-	public boolean StartOrder()
-	{
-		CurrentOrder.addAll(WaitQueueOrder.peek().FullTableOrder);// Adds all the orders from the Queue in Table order.
-		current=WaitQueueOrder.peek().Employee;
-		WaitQueueOrder.remove();                  //Remove items from the waiting orders
-		return true;
-	}
-	
+
 	/*
 	 * Constructor	
 	 */
@@ -109,5 +98,17 @@ public class KitchenStaffHandler
 	{
 		WaitQueueOrder.add(T);
 	}
+	
+	
+	/*
+	 * 
+	 */
+
+	public static void findIngredient(String I)
+	{
+
+	}
+
+	
 	
 }

@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.Collections;
@@ -45,6 +46,7 @@ import Login.LoginWindow;
 import Shared.ADT.*;
 import Shared.ADT.MenuItem;
 import Shared.Gradients.*;
+import Shared.Notifications.NotificationBox;
 
 import javax.swing.ButtonGroup;
 import javax.swing.border.LineBorder;
@@ -62,7 +64,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	private JButton payWithCash,payWithCard;
 	private JLabel titleLabel,dateAndTime;
 	//Other Variables
-	private Timer timer;
+	private Timer timer,timer3,timer4;
 	private JTable CurrentOrder,OrdersTable,StockTable,MessageTable;
 	private JPanel panel;
 	private JPanel panel_1;
@@ -109,8 +111,13 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
                 dispose();
             }
         });
-		KitchenStaffCommunicator test1 = new KitchenStaffCommunicator();
-		test1.getIngredients();
+
+		
+		
+		
+	
+		
+		
 		this.setVisible(true);
 	}
 
@@ -136,9 +143,16 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			
 			
 		setRootPanel();
-		FillWaitingOrders();
 	
-		FillInventory(IngredientHandler.IngredientList,true);
+		try{
+			FillInventory();
+			FillWaitingOrders();
+			}
+			catch(SQLException e)
+			{
+				
+			};	
+
 		
 		
 		
@@ -148,7 +162,8 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	{
 		rootPanel.add(titlePanel);
 					
-					
+		NotificationBox box=new NotificationBox();
+		
 								
 		rootPanel.add(buttonPanel);
 		
@@ -159,7 +174,9 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		backgroundPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		backgroundPanel.setGradient(new Color(255,255,255), new Color(255,110,110));
 		backgroundPanel.setLayout(null);
+		rootPanel.add(box);
 		rootPanel.add(buttonPanelBackground);
+
 	}
 	
 	private void setBackgroundPanel()
@@ -205,6 +222,18 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		            timer.setCoalesce(true);
 		            timer.setInitialDelay(0);
 		            timer.start();
+		        	timer3 = new Timer(6000,this);
+		            timer3.setRepeats(true);
+		            timer3.setCoalesce(true);
+		            timer3.setInitialDelay(0);
+		            timer3.start();
+		            /*
+		            timer4=new Timer(6000,this);
+		            timer4.setRepeats(true);
+		            timer4.setCoalesce(true);
+		            timer4.setInitialDelay(0);
+		            timer4.start();
+		            */
 	}
 	
 	//*********************************************************
@@ -325,10 +354,22 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 				try 
 				{
 					int rowselected=CurrentOrder.getSelectedRow();
-					test=(String) ModelCurr.getValueAt(rowselected, 1);
-					int id=MenuItem.getId(test);
-					InventoryFix(id,(Integer) ModelCurr.getValueAt(rowselected,2));
-					ModelCurr.removeRow(rowselected);
+					KitchenStaffCommunicator temptest=new KitchenStaffCommunicator();
+					String[] temp=temptest.getTableOrders();
+					
+					int idloc= 7*(rowselected)+5;           //Gets location of MENUID
+					int MenuID=Integer.parseInt(temp[idloc]); // Gets the MENUID value
+					int rowid=Integer.parseInt(temp[7*(rowselected)+6]);
+					String qs=(String) CurrentOrder.getValueAt(rowselected, 2);
+					int q=Integer.parseInt(qs);
+					JOptionPane.showMessageDialog(this,"THIS IS THE MENUID"+MenuID);
+					int i=0;
+					
+					String[] IngList=temptest.getMenuItemIngredients(MenuID,rowid);
+			
+					temptest.UpdateInventory(IngList,q);     //Updates inventory given the IngList
+					FillInventory();
+					FillWaitingOrders();
 					if(CurrentOrder.getRowCount()==0)
 					{
 						JOptionPane.showMessageDialog(this, "All orders Complete.");
@@ -337,6 +378,9 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 				catch (IndexOutOfBoundsException e1)
 				{
 					JOptionPane.showMessageDialog(this, "Please select a row.");
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
 			}
 		    }
@@ -366,6 +410,28 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			{
 				updateClock();
 			}
+		if(a==timer3)
+		{
+			try {
+				FillInventory(); 
+				FillWaitingOrders();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		/*
+		if(a==timer4)
+		{
+			try{
+				FillWaitingOrders();
+			}
+			catch(SQLException e1)
+			{
+				e1.printStackTrace();
+			}
+		}
+		*/
 	}
 	
 
@@ -373,7 +439,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	{
 		
 		panel_1 = new JPanel();
-		panel_1.setBorder(new TitledBorder( null, "BLAH", TitledBorder.CENTER, TitledBorder.BELOW_TOP, myFont, new Color(0, 0, 0)));
+		panel_1.setBorder(new TitledBorder( null, "Orders", TitledBorder.CENTER, TitledBorder.BELOW_TOP, myFont, new Color(0, 0, 0)));
 		panel_1.setBounds(770, 75, 400, 580);
 		rootPanel.add(panel_1);
 		panel_1.setLayout(null);
@@ -601,42 +667,36 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		
 	}
 	*/
-	private void FillWaitingOrders()
-	{
-		ModelOrders=(DefaultTableModel)CurrentOrder.getModel();
-		ExampleOrders test2=new ExampleOrders();
-//		TableOrder temp2=test2.table5;
-		int rowtemp2=0;
-
 	
+	private void FillWaitingOrders() throws SQLException 
+	{
 
 		
-		while(!KitchenStaffHandler.WaitQueueOrder.isEmpty())
-		{
+		ModelOrders=(DefaultTableModel)CurrentOrder.getModel();
+		KitchenStaffCommunicator KC=new KitchenStaffCommunicator();
+		String[] Orders=KC.getTableOrders();
+		int rows=Orders.length/6 -1;
+		int rowtemp2=0;
 		
-		while(!KitchenStaffHandler.WaitQueueOrder.peek().FullTableOrder.isEmpty())
+		for(int i=0;i<Orders.length;i++)
 		{
-			Order ordertemp2=KitchenStaffHandler.WaitQueueOrder.peek().FullTableOrder.peek();
+				
+	
 			
-			ModelOrders.setValueAt(KitchenStaffHandler.WaitQueueOrder.peek().TABLE_ID, rowtemp2, 0);
-			ModelOrders.setValueAt(ordertemp2.item.STRING_ID, rowtemp2, 1);
-			ModelOrders.setValueAt(ordertemp2.Quantity, rowtemp2, 2);
-			ModelOrders.setValueAt(ordertemp2.Spc_Req, rowtemp2, 3);
+			ModelOrders.setValueAt(Orders[i], rowtemp2, 0);
+			i++;
+			ModelOrders.setValueAt(Orders[i], rowtemp2, 1);
+			i++;
+			ModelOrders.setValueAt(Orders[i], rowtemp2, 2);
+			i++;
+			ModelOrders.setValueAt(Orders[i], rowtemp2, 3);
+			i+=3;
 			rowtemp2++;
-			KitchenStaffHandler.WaitQueueOrder.peek().FullTableOrder.remove();
-			if(!KitchenStaffHandler.WaitQueueOrder.peek().FullTableOrder.isEmpty())
+			if(ModelOrders.getRowCount()-1<rows)
 			{
 				ModelOrders.addRow(new Object[][] {
 						{null, null, null, null}});
 			}
-		}
-
-		KitchenStaffHandler.WaitQueueOrder.remove();
-		if(!KitchenStaffHandler.WaitQueueOrder.isEmpty())
-		{
-			ModelOrders.addRow(new Object[][] {
-				{null, null, null, null}});
-		}
 		}
 		
 	}
@@ -645,23 +705,39 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	 *  @returns nothing. 
 	 */
 
-	private void FillInventory(Ingredient ingredientList[],boolean moreinven)
+	private void FillInventory() throws SQLException
 	{
 		
 		DefaultTableModel ModelInven=(DefaultTableModel)StockTable.getModel();
-		int rowtemp=0;
-		for(int i=0;i<ingredientList.length;i++)
-		{
-			if(i!=ingredientList.length-1 &(moreinven))
-			{
-				ModelInven.addRow(new Object[][]{
-					{null, null},});
-			}
-			ModelInven.setValueAt(ingredientList[i].name,rowtemp,0);
-			ModelInven.setValueAt(ingredientList[i].count,rowtemp,1);
-			rowtemp++;
-		}
+		KitchenStaffCommunicator test=new KitchenStaffCommunicator();
 
+		try{
+
+		
+		String[] InventoryName=test.getInventoryName();
+		Integer[] InventoryQuant=test.getInventoryQ();
+		int rows=InventoryName.length;
+	
+			int rowtemp=0;
+			for(int i=0;i<InventoryName.length;i++)
+			{
+			
+				ModelInven.setValueAt(InventoryName[i],rowtemp,0);
+				ModelInven.setValueAt(InventoryQuant[i],rowtemp,1);
+				rowtemp++;
+				if(ModelInven.getRowCount()<rows)
+				{
+					ModelInven.addRow(new Object[][]{
+							{null, null},});
+				}
+			}
+		
+		
+		}
+		catch (SQLException e)
+		{
+			
+		};
 
 	}
 
@@ -707,7 +783,6 @@ private void MoveWaitingtoCurrent()
 		Ingredient temp1[]=temp.ings;
 
 		KitchenStaffHandler.UpdateInventory(temp1,quantity);
-		FillInventory(IngredientHandler.IngredientList,false);
 	}
 	
 	/*
