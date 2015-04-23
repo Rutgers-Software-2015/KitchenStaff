@@ -322,11 +322,13 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		{
 			for(int i=1;i<=7;i++)
 			{ 
-				if((TableOrder.getString("CURRENT_STATUS").equals("NOT READY") ) || (TableOrder.getString("CURRENT_STATUS").equals("RETURNED") ))
+				if(TableOrder.getString("CURRENT_STATUS") != null)
 				{
-					rowcount++;
-				}
-				
+					if((TableOrder.getString("CURRENT_STATUS").equals("NOT READY") ) || (TableOrder.getString("CURRENT_STATUS").equals("RETURNED") ))
+					{
+						rowcount++;
+					}
+				}	
 			}
 		}while(TableOrder.next());
 		String[] FullOrders=new String[rowcount];
@@ -336,6 +338,8 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 					
 					while(TableOrder.next())
 					{	
+						if(TableOrder.getString("CURRENT_STATUS") != null)
+						{
 						if(TableOrder.getString("CURRENT_STATUS").equals("NOT READY"))
 						{
 							FullOrders[arrayindex]=TableOrder.getString("TABLE_ID");
@@ -352,6 +356,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 							arrayindex++;
 							FullOrders[arrayindex]=TableOrder.getString("rowid");
 							arrayindex++;
+						}
 						}
 					}
 					this.disconnect();
