@@ -46,7 +46,10 @@ import Login.LoginWindow;
 import Shared.ADT.*;
 import Shared.ADT.MenuItem;
 import Shared.Gradients.*;
+<<<<<<< HEAD
 import Shared.Notifications.NotificationGUI;
+=======
+>>>>>>> origin/master
 
 import javax.swing.ButtonGroup;
 import javax.swing.border.LineBorder;
@@ -160,8 +163,11 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		rootPanel.add(notification);
 			
 		rootPanel.add(titlePanel);
+<<<<<<< HEAD
 					
 	
+=======
+>>>>>>> origin/master
 		
 								
 		rootPanel.add(buttonPanel);
@@ -173,7 +179,10 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		backgroundPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		backgroundPanel.setGradient(new Color(255,255,255), new Color(255,110,110));
 		backgroundPanel.setLayout(null);
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
 		rootPanel.add(buttonPanelBackground);
 
 	}
