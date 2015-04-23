@@ -46,7 +46,7 @@ import Login.LoginWindow;
 import Shared.ADT.*;
 import Shared.ADT.MenuItem;
 import Shared.Gradients.*;
-import Shared.Notifications.NotificationBox;
+import Shared.Notifications.NotificationGUI;
 
 import javax.swing.ButtonGroup;
 import javax.swing.border.LineBorder;
@@ -74,7 +74,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	private DefaultTableModel ModelCurr,ModelOrders;
 	public Queue<Order> Current;
 	public Queue<TableOrder> temp;
-	
+	private NotificationGUI notification;
 	public KitchenStaffGUI()
 	{
 		super();
@@ -86,12 +86,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	{
 		
 		//Used for testing till database is fully functioning.
-		ExampleOrders test=new ExampleOrders();
-		KitchenStaffHandler.addTableOrder(test.table2);
-		KitchenStaffHandler.addTableOrder(test.table3);
-		KitchenStaffHandler.addTableOrder(test.table5);
-		KitchenStaffHandler.addTableOrder(test.table4);
-		KitchenStaffHandler.addTableOrder(test.table1);
+
 		
 		this.setTitle("KitchenStaff Interface");
 		this.setResizable(true);
@@ -108,6 +103,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
             public void windowClosing(WindowEvent e)
             {
                 new LoginWindow();
+                notification.close();
                 dispose();
             }
         });
@@ -136,7 +132,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			CurrentOrderScroll();
 
 	// Creates the JTable for Messages
-			MessageScroll();
+		//	MessageScroll();
 			
    // Creates the JTable for Inventory
 			InventoryScroll();
@@ -160,9 +156,12 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	
 	private void setRootPanel()
 	{
+		notification = new NotificationGUI(1,"KitchenStaff");
+		rootPanel.add(notification);
+			
 		rootPanel.add(titlePanel);
 					
-		NotificationBox box=new NotificationBox();
+	
 		
 								
 		rootPanel.add(buttonPanel);
@@ -174,7 +173,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		backgroundPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		backgroundPanel.setGradient(new Color(255,255,255), new Color(255,110,110));
 		backgroundPanel.setLayout(null);
-		rootPanel.add(box);
+
 		rootPanel.add(buttonPanelBackground);
 
 	}
@@ -324,6 +323,10 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 						break;
 					case 0:
 						String msg = JOptionPane.showInputDialog("Please input the message: ");
+					
+						//Sending emergency to all employees
+							notification.sendMessage("ALL", msg);
+
 						break;
 					}
 				//SendMessage(msg,0); // 0 means all employees
@@ -356,17 +359,15 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 					int rowselected=CurrentOrder.getSelectedRow();
 					KitchenStaffCommunicator temptest=new KitchenStaffCommunicator();
 					String[] temp=temptest.getTableOrders();
-					
+			
 					int idloc= 7*(rowselected)+5;           //Gets location of MENUID
 					int MenuID=Integer.parseInt(temp[idloc]); // Gets the MENUID value
 					int rowid=Integer.parseInt(temp[7*(rowselected)+6]); //gets row id of order
 					String qs=(String) CurrentOrder.getValueAt(rowselected, 2);
 					int q=Integer.parseInt(qs);
 	
-					
-					String[] IngList=temptest.getMenuItemIngredients(MenuID,rowid);
-			
-					temptest.UpdateInventory(IngList,q);     //Updates inventory given the IngList
+					//Get the ingredients and update inventory accordingly.
+					temptest.getMenuItemIngredientsandUpdate(MenuID,rowid,q);
 					FillInventory();
 					FillWaitingOrders();
 					if(CurrentOrder.getRowCount()==0)
@@ -412,8 +413,10 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		if(a==timer3)
 		{
 			try {
+				
 				FillInventory(); 
 				FillWaitingOrders();
+		
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -533,7 +536,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	}
 */	
 	
-
+/*
 		private void MessageScroll()
 		{
 			
@@ -577,6 +580,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 							MessageTable.getColumnModel().getColumn(1).setPreferredWidth(70);
 			MessagesPanel.setViewportView(MessageTable);
 		}
+		*/
 		/*
 		 * Creates the top left ScrollView  with the current Inventory.
 		 * @returns nothing.
@@ -587,12 +591,12 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 				
 				panel_3 = new JPanel();
 				panel_3.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Inventory Available", TitledBorder.CENTER, TitledBorder.BELOW_TOP, myFont, new Color(0, 0, 0)));
-				panel_3.setBounds(280, 75, 400, 280);
+				panel_3.setBounds(280, 75, 400,580);
 				rootPanel.add(panel_3);
 				panel_3.setLayout(null);
 				
 				JScrollPane StockPanel = new JScrollPane();
-				StockPanel.setBounds(0, 27, 400, 253);
+				StockPanel.setBounds(0, 27, 400, 653);
 				panel_3.add(StockPanel);
 				StockPanel.setToolTipText("");
 				StockPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -673,13 +677,21 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		
 		ModelOrders=(DefaultTableModel)CurrentOrder.getModel();
 		KitchenStaffCommunicator KC=new KitchenStaffCommunicator();
+		KC.CheckWaitingOrders();
 		String[] Orders=KC.getTableOrders();
 		int rows=Orders.length/7;
 		int rowtemp2=0;
-		
+
 		for(int i=0;i<Orders.length;i++)
 		{	
-		
+		/*
+			int statusloc=7*(i)+4;
+			String status=Orders[statusloc];
+			if(status.equals("RETURNED"))
+			{
+				
+			}
+		*/	
 			ModelOrders.setValueAt(Orders[i], rowtemp2, 0);
 			i++;
 			ModelOrders.setValueAt(Orders[i], rowtemp2, 1);
@@ -689,11 +701,15 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			ModelOrders.setValueAt(Orders[i], rowtemp2, 3);
 			i+=3;
 			rowtemp2++;
+			
+	
+			
 			if(ModelOrders.getRowCount()<rows)
 			{
 				ModelOrders.addRow(new Object[][] {
 						{null, null, null, null}});
 			}
+			
 			
 			
 		}
@@ -748,50 +764,13 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 
 	}
 
-/*	
-private void MoveWaitingtoCurrent()
-{
-	int rowtemp=0;
-	int tableid=-1;
-	ModelOrders=(DefaultTableModel)OrdersTable.getModel();
-	if(ModelOrders.getRowCount()>0)
-	{
-		tableid=(Integer) ModelOrders.getValueAt(0,0);
-	
-	while(tableid==(Integer) ModelOrders.getValueAt(0,0))
-	{
-	
-		ModelCurr.setValueAt(tableid,rowtemp,0);
-		ModelCurr.setValueAt(ModelOrders.getValueAt(0,1),rowtemp,1);
-		ModelCurr.setValueAt(ModelOrders.getValueAt(0,2),rowtemp,2);
-		ModelCurr.setValueAt(ModelOrders.getValueAt(0,3),rowtemp,3);
-		ModelOrders.removeRow(0);
-		rowtemp++;
-		if(tableid==(Integer) ModelOrders.getValueAt(0,0))
-		{
-			ModelCurr.addRow(new Object[][] {
-				{null, null, null, null}});
-		}
-	}
-	}
-	
-	
-}
-*/
+
 	
 /*
  * As items are completed this function updates our inventory based off the ingredients for that i
  */
 
-	private void InventoryFix(int Menu_ID,int quantity)
-	{
-		MenuItem temp = new MenuItem(Menu_ID);
-		
-		Ingredient temp1[]=temp.ings;
 
-		KitchenStaffHandler.UpdateInventory(temp1,quantity);
-	}
-	
 	/*
 	public boolean isThereInternet()
 	{
