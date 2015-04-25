@@ -123,6 +123,8 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	{
 		rootPanel = new JPanel();
 		rootPanel.setLayout(null);
+		notification = new NotificationGUI(1,"KitchenStaff");
+		rootPanel.add(notification);
 		setBackgroundPanel();
 		setTitlePanel();
 		setCardPanel();
@@ -160,8 +162,116 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	
 	private void setRootPanel()
 	{
-		notification = new NotificationGUI(1,"KitchenStaff");
-		rootPanel.add(notification);
+		
+		panel_1 = new JPanel();
+		panel_1.setBackground(Color.WHITE);
+		panel_1.setBorder(new LineBorder(new Color(0, 0, 0)));
+		panel_1.setBounds(770, 75, 400, 580);
+		rootPanel.add(panel_1);
+		panel_1.setLayout(null);
+		
+				JScrollPane CurrentOrderPanel = new JScrollPane();
+				CurrentOrderPanel.setBounds(0, 35, 400, 545);
+				CurrentOrderPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+				CurrentOrderPanel.setBackground(Color.white);
+				CurrentOrderPanel.setOpaque(false);
+				panel_1.add(CurrentOrderPanel);
+				
+							
+							CurrentOrder = new JTable();
+							CurrentOrder.setBackground(Color.white);
+							CurrentOrder.setFont(new Font("Tahoma", Font.PLAIN, 15));
+							CurrentOrder.setModel(new DefaultTableModel(
+								new Object[][] {
+									{null, null, null, null},
+								},
+								new String[] {
+									"Table ID", "MenuItem", "Quantity", "Special Instructions"
+								}
+							) {
+								Class[] columnTypes = new Class[] {
+									Integer.class, MenuItem.class, Integer.class, String.class
+								};
+								public Class getColumnClass(int columnIndex) {
+									return columnTypes[columnIndex];
+								}
+								boolean[] columnEditables = new boolean[] {
+									false, false, false, false
+								};
+								public boolean isCellEditable(int row, int column) {
+									return columnEditables[column];
+								}
+							});
+							CurrentOrder.getColumnModel().getColumn(0).setResizable(false);
+							CurrentOrder.getColumnModel().getColumn(0).setPreferredWidth(50);
+							CurrentOrder.getColumnModel().getColumn(1).setResizable(false);
+							CurrentOrder.getColumnModel().getColumn(1).setPreferredWidth(110);
+							CurrentOrder.getColumnModel().getColumn(2).setResizable(false);
+							CurrentOrder.getColumnModel().getColumn(2).setPreferredWidth(55);
+							CurrentOrder.getColumnModel().getColumn(3).setResizable(false);
+							CurrentOrder.getColumnModel().getColumn(3).setPreferredWidth(125);
+							
+							CurrentOrderPanel.setViewportView(CurrentOrder);
+							
+							JLabel lblOrders = new JLabel("Orders");
+							lblOrders.setFont(new Font("Tahoma", Font.BOLD, 16));
+							lblOrders.setHorizontalAlignment(SwingConstants.CENTER);
+							lblOrders.setBounds(0, 0, 400, 35);
+							panel_1.add(lblOrders);
+		
+		panel_3 = new JPanel();
+		panel_3.setBackground(Color.WHITE);
+		panel_3.setBorder(new LineBorder(new Color(0, 0, 0)));
+		panel_3.setBounds(280, 75, 400,580);
+		rootPanel.add(panel_3);
+		panel_3.setLayout(null);
+		
+		JScrollPane StockPanel = new JScrollPane();
+		StockPanel.setBounds(0, 35, 400, 545);
+		StockPanel.setBackground(Color.white);
+		StockPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+		panel_3.add(StockPanel);
+		StockPanel.setToolTipText("");
+		StockPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		
+			
+			StockTable = new JTable();
+			StockTable.setBackground(Color.white);
+			StockTable.setFont(new Font("Tahoma", Font.PLAIN, 15));
+			StockTable.setRowSelectionAllowed(false);
+			StockTable.setModel(new DefaultTableModel(
+				new Object[][] {
+					{null, null},
+
+				},
+				new String[] {
+					"Ingredient", "Quantity"
+				}
+			) {
+				Class[] columnTypes = new Class[] {
+					String.class, Integer.class
+				};
+				public Class getColumnClass(int columnIndex) {
+					return columnTypes[columnIndex];
+				}
+				boolean[] columnEditables = new boolean[] {
+					false, false
+				};
+				public boolean isCellEditable(int row, int column) {
+					return columnEditables[column];
+				}
+			});
+			StockTable.getColumnModel().getColumn(0).setResizable(false);
+			StockTable.getColumnModel().getColumn(0).setPreferredWidth(120);
+			StockTable.getColumnModel().getColumn(1).setResizable(false);
+			StockTable.getColumnModel().getColumn(1).setMaxWidth(100);
+			StockPanel.setViewportView(StockTable);
+			
+			JLabel lblInventoryAvailable = new JLabel("Inventory Available");
+			lblInventoryAvailable.setFont(new Font("Tahoma", Font.BOLD, 16));
+			lblInventoryAvailable.setHorizontalAlignment(SwingConstants.CENTER);
+			lblInventoryAvailable.setBounds(0, 0, 400, 35);
+			panel_3.add(lblInventoryAvailable);
 			
 		rootPanel.add(titlePanel);
 
@@ -426,50 +536,6 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	private void CurrentOrderScroll()
 	{
 		
-		panel_1 = new JPanel();
-		panel_1.setBorder(new TitledBorder( null, "Orders", TitledBorder.CENTER, TitledBorder.BELOW_TOP, myFont, new Color(0, 0, 0)));
-		panel_1.setBounds(770, 75, 400, 580);
-		rootPanel.add(panel_1);
-		panel_1.setLayout(null);
-
-		JScrollPane CurrentOrderPanel = new JScrollPane();
-		CurrentOrderPanel.setBounds(0, 27, 400, 555);
-		panel_1.add(CurrentOrderPanel);
-		
-					
-					CurrentOrder = new JTable();
-					CurrentOrder.setModel(new DefaultTableModel(
-						new Object[][] {
-							{null, null, null, null},
-						},
-						new String[] {
-							"Table ID", "MenuItem", "Quantity", "Special Instructions"
-						}
-					) {
-						Class[] columnTypes = new Class[] {
-							Integer.class, MenuItem.class, Integer.class, String.class
-						};
-						public Class getColumnClass(int columnIndex) {
-							return columnTypes[columnIndex];
-						}
-						boolean[] columnEditables = new boolean[] {
-							false, false, false, false
-						};
-						public boolean isCellEditable(int row, int column) {
-							return columnEditables[column];
-						}
-					});
-					CurrentOrder.getColumnModel().getColumn(0).setResizable(false);
-					CurrentOrder.getColumnModel().getColumn(0).setPreferredWidth(50);
-					CurrentOrder.getColumnModel().getColumn(1).setResizable(false);
-					CurrentOrder.getColumnModel().getColumn(1).setPreferredWidth(110);
-					CurrentOrder.getColumnModel().getColumn(2).setResizable(false);
-					CurrentOrder.getColumnModel().getColumn(2).setPreferredWidth(55);
-					CurrentOrder.getColumnModel().getColumn(3).setResizable(false);
-					CurrentOrder.getColumnModel().getColumn(3).setPreferredWidth(125);
-					
-					CurrentOrderPanel.setViewportView(CurrentOrder);
-		
 	}
 /*
 	private void WaitingOrderScroll()
@@ -574,49 +640,6 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			private void InventoryScroll()
 			{
 				Table table1=new Table(1,null,true);
-				
-				panel_3 = new JPanel();
-				panel_3.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Inventory Available", TitledBorder.CENTER, TitledBorder.BELOW_TOP, myFont, new Color(0, 0, 0)));
-				panel_3.setBounds(280, 75, 400,580);
-				rootPanel.add(panel_3);
-				panel_3.setLayout(null);
-				
-				JScrollPane StockPanel = new JScrollPane();
-				StockPanel.setBounds(0, 27, 400, 653);
-				panel_3.add(StockPanel);
-				StockPanel.setToolTipText("");
-				StockPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-				
-					
-					StockTable = new JTable();
-					StockTable.setRowSelectionAllowed(false);
-					StockTable.setModel(new DefaultTableModel(
-						new Object[][] {
-							{null, null},
-
-						},
-						new String[] {
-							"Ingredient", "Quantity"
-						}
-					) {
-						Class[] columnTypes = new Class[] {
-							String.class, Integer.class
-						};
-						public Class getColumnClass(int columnIndex) {
-							return columnTypes[columnIndex];
-						}
-						boolean[] columnEditables = new boolean[] {
-							false, false
-						};
-						public boolean isCellEditable(int row, int column) {
-							return columnEditables[column];
-						}
-					});
-					StockTable.getColumnModel().getColumn(0).setResizable(false);
-					StockTable.getColumnModel().getColumn(0).setPreferredWidth(120);
-					StockTable.getColumnModel().getColumn(1).setResizable(false);
-					StockTable.getColumnModel().getColumn(1).setMaxWidth(100);
-				StockPanel.setViewportView(StockTable);
 			}
 	
 	
@@ -749,35 +772,4 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		};
 
 	}
-
-
-	
-/*
- * As items are completed this function updates our inventory based off the ingredients for that i
- */
-
-
-	/*
-	public boolean isThereInternet()
-	{
-		try
-		{
-			URL yourl = new URL("http://google.com");
-			HttpURLConnection yourlConnect = (HttpURLConnection)yourl.openConnection();
-			yourlConnect.setConnectTimeout(2000);
-			
-			Object objData = yourlConnect.getContent();
-		}catch(UnknownHostException e)
-		{
-			return false;
-		}
-		catch(IOException e)
-		{
-			return false;
-		}
-		return true;
-	}
-
-	*/
-
 }
