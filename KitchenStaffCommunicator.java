@@ -237,6 +237,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			this.tell("use MAINDB;");
 			ResultSet I = this.tell("select * FROM INVENTORY;");
 			boolean updated=true;
+			I.beforeFirst();
 		for(int i=0; i<Ing.length;i++)
 		{
 			while(I.next())
@@ -246,15 +247,14 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 				{
 			
 					int old=I.getInt("Amount");
-					int tempold=old;
 					old=old-q*1;
 					// Already checked it could be updated. So update inventory.
 		
-						String sqlcommand="UPDATE MAINDB.INVENTORY SET Amount= "+old+" where Item_Name="+"'"+Ing[i]+"'"+";";
+						String sqlcommand="UPDATE INVENTORY SET Amount= "+old+" where Item_Name="+"'"+Ing[i]+"'"+";";
 						update(sqlcommand);
 						if(old==0)
 						{
-							// make funciton to change valid but in MENU.
+							// make function to change valid but in MENU.
 						}
 				}
 				
@@ -281,11 +281,14 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		this.tell("use MAINDB;");
 		ResultSet I = this.tell("select * FROM INVENTORY;");
 		boolean abletoupdate=true;
+		I.beforeFirst();
 	for(int i=0; i<Ing.length;i++)
 	{
 		while(I.next())
 		{
-
+		
+			
+			
 			if(I.getString("Item_Name").equals(Ing[i]))
 			{
 		
@@ -411,6 +414,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		this.disconnect();
 		
 	}
+
 	
 	
 }

@@ -106,16 +106,12 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
             {
                 new LoginWindow();
                 notification.close();
+                timer.stop();
+                timer3.stop();
                 dispose();
             }
         });
 
-		
-		
-		
-	
-		
-		
 		this.setVisible(true);
 	}
 
@@ -133,19 +129,6 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		CurrentOrderScroll();
 		InventoryScroll();
 		
-	
-	// Creates the Table for Current Orders	
-			
-
-	// Creates the JTable for Messages
-		//	MessageScroll();
-			
-   // Creates the JTable for Inventory
-
-			
-			
-	
-	
 		try{
 			FillInventory();
 			FillWaitingOrders();
@@ -338,13 +321,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		            timer3.setCoalesce(true);
 		            timer3.setInitialDelay(0);
 		            timer3.start();
-		            /*
-		            timer4=new Timer(6000,this);
-		            timer4.setRepeats(true);
-		            timer4.setCoalesce(true);
-		            timer4.setInitialDelay(0);
-		            timer4.start();
-		            */
+		     
 	}
 	
 	//*********************************************************
@@ -492,7 +469,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 						JOptionPane.showMessageDialog(this, "After clicking the button. Type in emergency message. It will send it to all the employee.");
 						break;
 					case 1:
-						JOptionPane.showMessageDialog(this, "Open the notification box by clicking on the timer and  then press Send Message.");
+						JOptionPane.showMessageDialog(this, "Open the notification box by clicking on the clock and  then press Send Message.");
 						break;
 					case 2:
 						JOptionPane.showMessageDialog(this, "Select the row for the item that was completed. Then click the button.");
