@@ -20,11 +20,24 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 {
 	private NotificationGUI temp=new NotificationGUI(5,"KitchenStaff");
 	
+	/*
+	 *  Constructor for Communicator. Establishes connection to the DB.
+	 *  @return nothing.
+	 */
 	public KitchenStaffCommunicator()
 	{
-	
+
+			this.connect("admin", "gradMay17");
+			this.tell("use MAINDB;");
 	}
-	
+	/*
+	 * Used to disconnect from the Database.
+	 * @return nothing.
+	 */
+	public void dis()
+	{
+		this.disconnect();
+	}
 	/*
 	public ResultSet getAllInventory() throws SQLException
 	{	/*
@@ -45,8 +58,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	 */
 	public String[] getInventoryName() throws SQLException
 	{	
-		this.connect("admin", "gradMay17");
-		this.tell("use MAINDB;");
+
 		ResultSet I = this.tell("select * FROM INVENTORY;");
 		
 	//Getting rows in result set
@@ -71,7 +83,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		    	InventoryName[arrayindex]=I.getString(1);
 				arrayindex++;
 			}
-			this.disconnect();
+
 			return InventoryName;
 		}
 		
@@ -80,14 +92,12 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			
 		}
 		
-		
 		return null;
 			
 	}
 	public Integer[] getInventoryQ() throws SQLException
 	{	
-		this.connect("admin", "gradMay17");
-		this.tell("use MAINDB;");
+	
 		ResultSet I = this.tell("select * FROM INVENTORY;");
 		
 	//Getting rows in result set
@@ -119,7 +129,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		{
 			
 		}
-	
+
 		return InventoryQ;
 	
 		
@@ -172,11 +182,11 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	{
 		try{
 		
-			this.connect("admin", "gradMay17");
-			this.tell("use MAINDB;");
+
 			String sqlcomm = "SELECT * FROM MENU WHERE MENU_ID = " + MenuID+";"; 
 			ResultSet rs =  this.tell(sqlcomm);
 			String I=rs.getString("INGREDIENTS");
+			String Item=rs.getString("ITEM_NAME");
 			
 	// Getting the tableid of that order.
 			String getTableid="SELECT TABLE_ID from TABLE_ORDER where rowid="+rowid+";";
@@ -197,10 +207,9 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			// Notifying the waiter.	
 				String notifyemployeecmnd="SELECT EMPLOYEE_ID FROM TABLE_ORDER where rowid=" +rowid+";";
 				ResultSet e=this.tell(notifyemployeecmnd);
-				String employeeid=e.getString("EMPLOYEE_ID");
 				
 				// Need to get Name of employee based of ID.
-				temp.sendMessage("WAITER", "Order Ready for Table "+tableid); //public message sent to waiter
+				temp.sendMessage("Waiter", Item +" ready for Table "+tableid); //public message sent to waiter
 			}
 			else
 			{
@@ -218,7 +227,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			{
 				
 			};
-			this.disconnect();
+
 			return true;
 			
 	}
@@ -233,8 +242,6 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	public boolean UpdateInventory(String Ing[],int q) throws SQLException
 	{
 
-			this.connect("admin", "gradMay17");
-			this.tell("use MAINDB;");
 			ResultSet I = this.tell("select * FROM INVENTORY;");
 			boolean updated=true;
 			I.beforeFirst();
@@ -276,9 +283,6 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	 */
 	public boolean Updateable(String[] Ing, int q) throws SQLException
 	{
-
-		this.connect("admin", "gradMay17");
-		this.tell("use MAINDB;");
 		ResultSet I = this.tell("select * FROM INVENTORY;");
 		boolean abletoupdate=true;
 		I.beforeFirst();
@@ -316,8 +320,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	
 	public String[] getTableOrders() throws SQLException
 	{
-		this.connect("admin", "gradMay17");
-		this.tell("use MAINDB;");
+
 		ResultSet TableOrder = this.tell("select * FROM TABLE_ORDER;");
 		
 	//Getting rows in result set
@@ -339,6 +342,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 				}	
 			}
 		}while(TableOrder.next());
+		
 		String[] FullOrders=new String[rowcount];
 		TableOrder.beforeFirst();
 		
@@ -367,7 +371,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 						}
 						}
 					}
-					this.disconnect();
+				
 
 					return FullOrders;
 				}
@@ -385,8 +389,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	 */
 	public void CheckWaitingOrders() throws SQLException
 	{
-		this.connect("admin", "gradMay17");
-		this.tell("use MAINDB;");
+
 		ResultSet Waiting = this.tell("select * FROM TABLE_ORDER where CURRENT_STATUS='WAITING'; ");
 		
 		while(Waiting.next())
@@ -411,7 +414,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			}
 			
 		}
-		this.disconnect();
+
 		
 	}
 

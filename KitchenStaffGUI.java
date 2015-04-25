@@ -46,9 +46,7 @@ import Login.LoginWindow;
 import Shared.ADT.*;
 import Shared.ADT.MenuItem;
 import Shared.Gradients.*;
-
 import Shared.Notifications.NotificationGUI;
-
 
 import javax.swing.ButtonGroup;
 import javax.swing.border.LineBorder;
@@ -77,6 +75,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	public Queue<Order> Current;
 	public Queue<TableOrder> temp;
 	private NotificationGUI notification;
+	KitchenStaffCommunicator commun=new KitchenStaffCommunicator();
 	public KitchenStaffGUI()
 	{
 		super();
@@ -108,6 +107,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
                 notification.close();
                 timer.stop();
                 timer3.stop();
+                commun.dis();
                 dispose();
             }
         });
@@ -126,8 +126,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		setCardPanel();
 		setButtonPanel();
 		setRootPanel();
-		CurrentOrderScroll();
-		InventoryScroll();
+
 		
 		try{
 			FillInventory();
@@ -430,23 +429,21 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 				try 
 				{
 					int rowselected=CurrentOrder.getSelectedRow();
-					KitchenStaffCommunicator temptest=new KitchenStaffCommunicator();
-					String[] temp=temptest.getTableOrders();
-			
-					int idloc= 7*(rowselected)+5;           //Gets location of MENUID
-					int MenuID=Integer.parseInt(temp[idloc]); // Gets the MENUID value
-					int rowid=Integer.parseInt(temp[7*(rowselected)+6]); //gets row id of order
 					String qs=(String) CurrentOrder.getValueAt(rowselected, 2);
 					int q=Integer.parseInt(qs);
-	
-					//Get the ingredients and update inventory accordingly.
-					temptest.getMenuItemIngredientsandUpdate(MenuID,rowid,q);
+					
+					// Have handler notify order is ready.
+					KitchenStaffHandler.OrderReady(rowselected,q,commun);
+
+					// Update the Inventory and Orders Display.	
 					FillInventory();
 					FillWaitingOrders();
+					
 					if(CurrentOrder.getRowCount()==0)
 					{
 						JOptionPane.showMessageDialog(this, "All orders Complete.");
 					}
+					
 				} 
 				catch (IndexOutOfBoundsException e1)
 				{
@@ -495,176 +492,25 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 				e1.printStackTrace();
 			}
 		}
-		/*
-		if(a==timer4)
-		{
-			try{
-				FillWaitingOrders();
-			}
-			catch(SQLException e1)
-			{
-				e1.printStackTrace();
-			}
-		}
-		*/
-	}
-	
-
-	private void CurrentOrderScroll()
-	{
-		
-	}
-/*
-	private void WaitingOrderScroll()
-	{
-		 Font myFont = new Font("SansSerif", Font.PLAIN, 18);
-		panel = new JPanel();
-		panel.setBorder(new TitledBorder(null, "Waiting Orders", TitledBorder.CENTER, TitledBorder.BELOW_TOP, myFont, null));
-		panel.setBounds(770, 375, 400, 280);
-		rootPanel.add(panel);
-		
-		panel.setLayout(null);
-		JScrollPane OrderPanel = new JScrollPane();
-		OrderPanel.setBounds(0, 27, 400, 252);
-		panel.add(OrderPanel);
-		
-					OrdersTable = new JTable();
-					OrdersTable.setModel(new DefaultTableModel(
-						new Object[][] {
-								{null, null, null, null},
-						},
-						new String[] {
-							"Table ID", "MenuItem", "Quantity", "Special Instrcutions"
-						}
-					) {
-						Class[] columnTypes = new Class[] {
-								Integer.class, MenuItem.class, Integer.class, String.class
-						};
-						public Class getColumnClass(int columnIndex) {
-							return columnTypes[columnIndex];
-						}
-						boolean[] columnEditables = new boolean[] {
-							false, false, false, false
-						};
-						public boolean isCellEditable(int row, int column) {
-							return columnEditables[column];
-						}
-					});
-					OrdersTable.getColumnModel().getColumn(0).setResizable(false);
-					OrdersTable.getColumnModel().getColumn(0).setPreferredWidth(49);
-					OrdersTable.getColumnModel().getColumn(1).setResizable(false);
-					OrdersTable.getColumnModel().getColumn(1).setPreferredWidth(110);
-					OrdersTable.getColumnModel().getColumn(2).setResizable(false);
-					OrdersTable.getColumnModel().getColumn(2).setPreferredWidth(55);
-					OrdersTable.getColumnModel().getColumn(2).setMinWidth(11);
-					OrdersTable.getColumnModel().getColumn(3).setResizable(false);
-					OrdersTable.getColumnModel().getColumn(3).setPreferredWidth(125);
-					OrderPanel.setViewportView(OrdersTable);
-					OrdersTable.setVisible(true);
-					OrderPanel.setVisible(true);
-	}
-*/	
-	
-/*
-		private void MessageScroll()
-		{
-			
-			panel_2 = new JPanel();
-			panel_2.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Messages", TitledBorder.CENTER, TitledBorder.BELOW_TOP, myFont, new Color(0, 0, 0)));
-			panel_2.setBounds(280, 375, 400, 280);
-			
-			rootPanel.add(panel_2);
-			panel_2.setLayout(null);
-			JScrollPane MessagesPanel = new JScrollPane();
-			MessagesPanel.setBounds(0, 30, 400, 250);
-			panel_2.add(MessagesPanel);
-			
-							
-							MessageTable = new JTable();
-							MessageTable.setModel(new DefaultTableModel(
-								new Object[][] {
-									{null, null},
-								},
-								new String[] {
-									"Message", "    From Employee"
-								}
-							) {
-								Class[] columnTypes = new Class[] {
-									String.class, Object.class
-								};
-								public Class getColumnClass(int columnIndex) {
-									return columnTypes[columnIndex];
-								}
-								boolean[] columnEditables = new boolean[] {
-									false, false
-								};
-								public boolean isCellEditable(int row, int column) {
-									return columnEditables[column];
-								}
-							});
-							MessageTable.getColumnModel().getColumn(0).setResizable(false);
-							MessageTable.getColumnModel().getColumn(0).setPreferredWidth(175);
-							MessageTable.getColumnModel().getColumn(0).setMaxWidth(200);
-							MessageTable.getColumnModel().getColumn(1).setResizable(false);
-							MessageTable.getColumnModel().getColumn(1).setPreferredWidth(70);
-			MessagesPanel.setViewportView(MessageTable);
-		}
-		*/
-		/*
-		 * Creates the top left ScrollView  with the current Inventory.
-		 * @returns nothing.
-		 */
-			private void InventoryScroll()
-			{
-				Table table1=new Table(1,null,true);
-			}
-	
-	
-	
-	
+	}	
 	private void updateClock() {
         dateAndTime.setText(DateFormat.getDateTimeInstance().format(new Date()));
     }
-	
-
-/*	
-	private void FillCurrentOrder()
-	{
-		ModelCurr=(DefaultTableModel)CurrentOrder.getModel();
-		int rowtemp=0;
-	
-		while(!Current.isEmpty())
-		{
-			Order ordertemp=Current.peek();
-			ModelCurr.setValueAt(1, rowtemp, 0);
-			
-			ModelCurr.setValueAt(ordertemp.item.STRING_ID, rowtemp, 1);
-			ModelCurr.setValueAt(ordertemp.Quantity, rowtemp, 2);
-			ModelCurr.setValueAt(ordertemp.Spc_Req, rowtemp, 3);
-			rowtemp++;
-			Current.remove();
-			if(!Current.isEmpty())
-			{
-				ModelCurr.addRow(new Object[][] {
-						{null, null, null, null}});
-			}
-			
-		}
-		ModelCurr.addRow(new Object[][] {
-				{null, null, null, null}});
-
-		
-	}
-	*/
-	
+/*
+ * 
+ * Fills all the NOT READY orders into the Orders ScrollView.
+ * Uses data received from KitchenStaffCommunicator
+ * @returns Nothing, does changes to GUI.
+ * 	
+ */
 	private void FillWaitingOrders() throws SQLException 
 	{
 
 		
 		ModelOrders=(DefaultTableModel)CurrentOrder.getModel();
-		KitchenStaffCommunicator KC=new KitchenStaffCommunicator();
-		KC.CheckWaitingOrders();
-		String[] Orders=KC.getTableOrders();
+
+		commun.CheckWaitingOrders();
+		String[] Orders=commun.getTableOrders();
 		int rows=Orders.length/7;
 		int rowtemp2=0;
 
@@ -718,13 +564,13 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	{
 		
 		DefaultTableModel ModelInven=(DefaultTableModel)StockTable.getModel();
-		KitchenStaffCommunicator test=new KitchenStaffCommunicator();
+	
 
 		try{
 
 		
-		String[] InventoryName=test.getInventoryName();
-		Integer[] InventoryQuant=test.getInventoryQ();
+		String[] InventoryName=commun.getInventoryName();
+		Integer[] InventoryQuant=commun.getInventoryQ();
 		int rows=InventoryName.length;
 	
 			int rowtemp=0;

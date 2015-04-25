@@ -1,6 +1,7 @@
 package KitchenStaff;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -16,72 +17,8 @@ import Shared.Communicator.DatabaseCommunicator;
 public class KitchenStaffHandler 
 {
 	
-	public static Queue<Order> CurrentOrder=new LinkedList<Order>();
-	public static Queue<TableOrder> WaitQueueOrder=new LinkedList<TableOrder>();
-	private Employee current;
-	public static int TABLE_ID;
-	
-	// make the communicator
-	/*
-	 * The function below sends the message to a particular employee.
-	 */
-	private static boolean SendMessage(String message,Employee employee)
-	{
-		// Use connection with communicator to send message
-		return true;
-	}
-	/*
-	 * Listen for any messages being sent to the KitchenStaff
-	 */
-	public String RecieveMessage()
-	{
-		// Listen on socket;
-		String message ="THE UNDERTAKER IS HERE";; // Set message received on socket.
-		return message; 	
-	}
 
-	/*
-	 * The function below sends emergency message to all the employees
-	 */
-	public boolean NotifyEmergency(String message)
-	{
-		/*
-		 * Use the SendMessage function to send emergency message to 
-		 * all employees.
-		 */
-		
-		return true;
-	}
-	/*
- 	* Updates the current Inventory stock.
- 	* @return TableStock is now updated.	
- 	*/
-	public static void UpdateInventory(Ingredient I[],int quantity)
-	{
 
-		for(int i=0;i<I.length;i++)
-		{
-			IngredientHandler.UpdateInventory(I[i],quantity*-1);
-		}
-		
-	}
-	
-	/*
-	 * Remove completed order and notify waiter to pick it up. Will be used once communicator created.
-	 */
-	public boolean OrderComplete(Order currentOrder)
-	{  
-		if(SendMessage("Order Complete",current))// Sends message to waiter say order is done.
-		{  
-			if(!CurrentOrder.isEmpty())
-			{
-				CurrentOrder.remove();
-			}
-			return true;                         // If message was sent return true
-		}
-		return false;
-	}
-	
 
 	/*
 	 * Constructor	
@@ -90,22 +27,25 @@ public class KitchenStaffHandler
 	{
 
 	}
-	/*
-	 * Adds the WaitingOrders to the WaitQueue.
-	 * @return WaitQueueOrder now has a new element added to the end.
-	 */
-	public static void addTableOrder(TableOrder T)
-	{
-		WaitQueueOrder.add(T);
-	}
+
 	
 	
-	/*
-	 * 
+	/* 
+	 * The function  Does the  Order Ready Commands once the order ready button is clicked.
+	 *  @return Nothing
 	 */
 
-	public static void findIngredient(String I)
+	public static void OrderReady(int rowselected,int q,KitchenStaffCommunicator comm) throws SQLException
 	{
+		
+		String[] temp=comm.getTableOrders();
+
+		int idloc= 7*(rowselected)+5;           //Gets location of MENUID
+		int MenuID=Integer.parseInt(temp[idloc]); // Gets the MENUID value
+		int rowid=Integer.parseInt(temp[7*(rowselected)+6]); //gets row id of order
+		
+		//Get the ingredients and update inventory accordingly.
+		comm.getMenuItemIngredientsandUpdate(MenuID,rowid,q);
 
 	}
 
