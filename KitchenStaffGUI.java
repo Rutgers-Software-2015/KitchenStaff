@@ -127,20 +127,22 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		setTitlePanel();
 		setCardPanel();
 		setButtonPanel();
-		temp=new LinkedList <TableOrder>();
-		//temp=KitchenStaffHandler.WaitQueueOrder;
+		setRootPanel();
+		CurrentOrderScroll();
+		InventoryScroll();
+		
 	
 	// Creates the Table for Current Orders	
-			CurrentOrderScroll();
+			
 
 	// Creates the JTable for Messages
 		//	MessageScroll();
 			
    // Creates the JTable for Inventory
-			InventoryScroll();
+
 			
 			
-		setRootPanel();
+	
 	
 		try{
 			FillInventory();
@@ -173,9 +175,9 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		backgroundPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		backgroundPanel.setGradient(new Color(255,255,255), new Color(255,110,110));
 		backgroundPanel.setLayout(null);
-
+		
 		rootPanel.add(buttonPanelBackground);
-
+	
 	}
 	
 	private void setBackgroundPanel()
@@ -246,7 +248,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		buttonPanel.setBounds(7, 61, 236, 604);
 		buttonPanel.setOpaque(false);
 		buttonPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
-		buttonPanel.setLayout(new GridLayout(5, 0, 5, 5));
+		buttonPanel.setLayout(new GridLayout(4, 0,4 , 4));
 		
 		// SendEmergency Button
 		emergencyButton = new GradientButton("Emergency");
@@ -254,13 +256,6 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		emergencyButton.setFont(emergencyButton.getFont().deriveFont(16.0f));
 		emergencyButton.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
 		emergencyButton.setFocusPainted(false);
-		
-		// Send Message Button
-		SendMessageButton = new GradientButton("Send Message");
-		SendMessageButton.addActionListener(this);
-		SendMessageButton.setFont(SendMessageButton.getFont().deriveFont(16.0f));
-		SendMessageButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-		SendMessageButton.setFocusPainted(false);
 		
 		// Order Ready Button
 		OrderReadyButton = new GradientButton("Order Ready");
@@ -284,7 +279,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		logOutButton.setFocusPainted(false);
 		
 		buttonPanel.add(emergencyButton);
-		buttonPanel.add(SendMessageButton);
+
 		buttonPanel.add(OrderReadyButton);
 		buttonPanel.add(helpButton);
 		buttonPanel.add(logOutButton);
@@ -331,16 +326,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 					}
 				//SendMessage(msg,0); // 0 means all employees
 			}
-		if(a == SendMessageButton)
-		{
-		//Asks for the message and the id,
-			String msg = JOptionPane.showInputDialog("Please input the message: ");
-			String id = JOptionPane.showInputDialog("Please input the id of the employee: ");
-			int emid=Integer.valueOf(id);
-			
-			//Use sendmessage funtion KSHandler.
-			//SendMessage(msg,emid);
-		}
+
 		if(a == OrderReadyButton)
 		    {
 			// Manager scroll views
@@ -396,7 +382,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 						JOptionPane.showMessageDialog(this, "After clicking the button. Type in emergency message. It will send it to all the employee.");
 						break;
 					case 1:
-						JOptionPane.showMessageDialog(this, "After clicking the button. Type in message and then employee ID. It will send the message to the employees.");
+						JOptionPane.showMessageDialog(this, "Open the notification box by clicking on the timer and  then press Send Message.");
 						break;
 					case 2:
 						JOptionPane.showMessageDialog(this, "Select the row for the item that was completed. Then click the button.");

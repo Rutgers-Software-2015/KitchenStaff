@@ -177,6 +177,11 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			String sqlcomm = "SELECT * FROM MENU WHERE MENU_ID = " + MenuID+";"; 
 			ResultSet rs =  this.tell(sqlcomm);
 			String I=rs.getString("INGREDIENTS");
+			
+	// Getting the tableid of that order.
+			String getTableid="SELECT TABLE_ID from TABLE_ORDER where rowid="+rowid+";";
+			ResultSet TID=this.tell(getTableid);
+			int tableid=TID.getInt("TABLE_ID");
 
     // Getting the list of ingredients for an item.
 			String[] IngList=ParseIngredients(I);
@@ -193,9 +198,9 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 				String notifyemployeecmnd="SELECT EMPLOYEE_ID FROM TABLE_ORDER where rowid=" +rowid+";";
 				ResultSet e=this.tell(notifyemployeecmnd);
 				String employeeid=e.getString("EMPLOYEE_ID");
-
+				
 				// Need to get Name of employee based of ID.
-				temp.sendMessage("WAITER", "Order Ready"); //public message sent to waiter
+				temp.sendMessage("WAITER", "Order Ready for Table "+tableid); //public message sent to waiter
 			}
 			else
 			{
