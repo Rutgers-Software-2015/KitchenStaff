@@ -12,9 +12,11 @@ import Shared.Communicator.DatabaseCommunicator;
 import Shared.Notifications.NotificationGUI;
 import Shared.Notifications.NotificationHandler;
 ;
-/*
- * author Rahul Tandon
- */
+/* This file assists in helping the  KitchenStaff communicate with the database and execute functions.
+ * @author Rahul Tandon
+ * @tester Rahul Tandon
+ * @debugger Rahul Tandon
+ **/
 public class KitchenStaffCommunicator extends DatabaseCommunicator
 
 {
@@ -39,21 +41,8 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		this.disconnect();
 	}
 	/*
-	public ResultSet getAllInventory() throws SQLException
-	{	/*
-		boolean INTERNET;
-		INTERNET = isThereInternet();
-		
-		this.connect("admin", "gradMay17");
-		this.tell("use MAINDB;");
-		ResultSet rsI = this.tell("select * FROM INVENTORY;");
-		this.disconnect();
-		return rsI;
-		
-	}*/
-
-	/*
-	 * Turns Inventory Result into a Array
+	 * Gets the inventory ingredients names from the database
+	 * @returns the name of each of the inventory items in a String array
 	 * 
 	 */
 	public String[] getInventoryName() throws SQLException
@@ -73,10 +62,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		
 		String[] InventoryName=new String[rowcount];// Initialize
 		try{
-			
-			
-			ResultSetMetaData rsd = I.getMetaData();
-			int colsize=rsd.getColumnCount();
+	
 			int arrayindex=0;
 			while(I.next())
 			{	
@@ -95,6 +81,10 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		return null;
 			
 	}
+/*
+ * Gets the inventory ingredients amounts from the database
+*  @returns the amount of each of the inventory items in a Integer array
+ */
 	public Integer[] getInventoryQ() throws SQLException
 	{	
 	
@@ -114,7 +104,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			
 			
 			ResultSetMetaData rsd = I.getMetaData();
-			int colsize=rsd.getColumnCount();
+			
 			int arrayindex=0;
 			while(I.next())
 			{	
@@ -178,6 +168,9 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		return temp;     // Return the Ingredients for the MENUItem.
 	}
 		
+	/*
+	 * Given the MENUID, rowid and quantity the system updates the order status
+	 */
 	public boolean getMenuItemIngredientsandUpdate(int MenuID,int rowid,int q) throws SQLException
 	{
 		try{
@@ -204,9 +197,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 				String sqlcommand="UPDATE TABLE_ORDER set CURRENT_STATUS ='READY' where rowid="+rowid+";"; 
 				this.update(sqlcommand);
 				
-			// Notifying the waiter.	
-				String notifyemployeecmnd="SELECT EMPLOYEE_ID FROM TABLE_ORDER where rowid=" +rowid+";";
-				ResultSet e=this.tell(notifyemployeecmnd);
+
 				
 				// Need to get Name of employee based of ID.
 				temp.sendMessage("Waiter", Item +" ready for Table "+tableid); //public message sent to waiter
@@ -283,16 +274,28 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	 */
 	public boolean Updateable(String[] Ing, int q) throws SQLException
 	{
+		String[] AllI=getInventoryName();
+		for(int j=0;j<Ing.length;j++)
+		{
+			for(int k=0;k<AllI.length;k++)
+			{
+				if(AllI[k].equals(Ing[j]))
+				{
+					break;
+				}
+			}
+			return false;
+		}
+		
+		
+		
 		ResultSet I = this.tell("select * FROM INVENTORY;");
 		boolean abletoupdate=true;
 		I.beforeFirst();
 	for(int i=0; i<Ing.length;i++)
 	{
 		while(I.next())
-		{
-		
-			
-			
+		{	
 			if(I.getString("Item_Name").equals(Ing[i]))
 			{
 		
@@ -352,7 +355,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 					{	
 						if(TableOrder.getString("CURRENT_STATUS") != null)
 						{
-						if(TableOrder.getString("CURRENT_STATUS").equals("NOT READY"))
+							if((TableOrder.getString("CURRENT_STATUS").equals("NOT READY") ) || (TableOrder.getString("CURRENT_STATUS").equals("RETURNED") ))
 						{
 							FullOrders[arrayindex]=TableOrder.getString("TABLE_ID");
 							arrayindex++;
@@ -417,7 +420,4 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 
 		
 	}
-
-	
-	
 }

@@ -7,12 +7,13 @@ import java.util.Queue;
 
 import Shared.ADT.*;
 import Shared.Communicator.DatabaseCommunicator;
-
-/**
- * 
- * @author Rahul Tandon
- *
- **/
+import Shared.Notifications.NotificationGUI;
+/*
+ * This file helps run some functions of the KitchenStaff.
+* @author Rahul Tandon
+* @tester Rahul Tandon
+* @debugger Rahul Tandon
+**/
 
 public class KitchenStaffHandler 
 {
@@ -47,6 +48,16 @@ public class KitchenStaffHandler
 		//Get the ingredients and update inventory accordingly.
 		comm.getMenuItemIngredientsandUpdate(MenuID,rowid,q);
 
+	}
+	public static boolean SendEmergency(String message,int confirm,NotificationGUI n)
+	{
+		if(confirm==1)
+		{
+			return false;
+		}
+		n.sendMessage("ALL", message);
+		return true;
+		
 	}
 
 	

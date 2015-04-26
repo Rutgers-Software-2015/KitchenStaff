@@ -1,7 +1,9 @@
 package KitchenStaff;
 /**
  * This .java file creates the gui for the KitchenStaff.
- * author Rahul Tandon
+ * @author Rahul Tandon
+ * @tester Rahul Tandon
+ * @debugger Rahul Tandon
  **/
 
 import java.awt.*; 
@@ -9,38 +11,33 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.sql.ResultSet;
+
 import java.sql.SQLException;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.util.Collections;
+
 import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
+
 import java.util.Queue;
-import java.util.Scanner;
-import java.util.Vector;
+
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableCellRenderer;
+
+
 import javax.swing.table.DefaultTableModel;
 import javax.swing.*;
-import javax.swing.border.Border;
+
 
 import Login.LoginWindow;
 import Shared.ADT.*;
@@ -52,30 +49,30 @@ import javax.swing.ButtonGroup;
 import javax.swing.border.LineBorder;
 import javax.swing.border.EtchedBorder;
 
-import Shared.Communicator.*;
+
 public class KitchenStaffGUI  extends JFrame implements ActionListener {
 
 	//Parent Panels
 	private JPanel rootPanel,titlePanel,buttonPanel;
 	private GradientPanel backgroundPanel,buttonPanelBackground;
-	private GradientPanel card1,card2,card3;
+	private GradientPanel card1;
 	//Swing Objects
-	private GradientButton logOutButton,emergencyButton,SendMessageButton,OrderReadyButton,helpButton;
-	private JButton payWithCash,payWithCard;
+	private GradientButton logOutButton,emergencyButton,OrderReadyButton,helpButton;
+
 	private JLabel titleLabel,dateAndTime;
 	//Other Variables
-	private Timer timer,timer3,timer4;
-	private JTable CurrentOrder,OrdersTable,StockTable,MessageTable;
-	private JPanel panel;
+	private Timer timer,timer3;
+	public JTable CurrentOrder,OrdersTable,StockTable;
+
 	private JPanel panel_1;
 	Font myFont = new Font("SansSerif", Font.PLAIN, 18);
-	private JPanel panel_2;
+
 	private JPanel panel_3;
-	private DefaultTableModel ModelCurr,ModelOrders;
+	public DefaultTableModel ModelCurr,ModelOrders, ModelInven;
 	public Queue<Order> Current;
 	public Queue<TableOrder> temp;
 	private NotificationGUI notification;
-	KitchenStaffCommunicator commun=new KitchenStaffCommunicator();
+	private KitchenStaffCommunicator commun;
 	public KitchenStaffGUI()
 	{
 		super();
@@ -88,8 +85,9 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		
 		//Used for testing till database is fully functioning.
 
-		
+		commun=new KitchenStaffCommunicator();
 		this.setTitle("KitchenStaff Interface");
+		notification = new NotificationGUI(5, "Kitchen");
 		this.setResizable(true);
 		this.setSize(1200,700);
 		this.frameManipulation();
@@ -103,11 +101,12 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
             @Override
             public void windowClosing(WindowEvent e)
             {
-                new LoginWindow();
                 notification.close();
                 timer.stop();
                 timer3.stop();
                 commun.dis();
+                new LoginWindow();
+ 
                 dispose();
             }
         });
@@ -132,10 +131,10 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			FillInventory();
 			FillWaitingOrders();
 			}
-			catch(SQLException e)
+			catch(SQLException | NullPointerException e)
 			{
 				
-			};	
+			};
 
 		
 		
@@ -389,7 +388,12 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		Object a = e.getSource();
 		if(a == logOutButton)
 			{	
+				notification.close();
+				timer.stop();
+				timer3.stop();
+				commun.dis();
 				dispose();
+				
 				new LoginWindow();
 				
 			}
@@ -406,8 +410,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 						String msg = JOptionPane.showInputDialog("Please input the message: ");
 					
 						//Sending emergency to all employees
-							notification.sendMessage("ALL", msg);
-
+							KitchenStaffHandler.SendEmergency(msg,0,notification);
 						break;
 					}
 				//SendMessage(msg,0); // 0 means all employees
@@ -458,7 +461,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		if(a == helpButton)
 			{
 				int choice=0;
-				String[] options={"Emergency","Send Message","Order Ready"};
+				String[] options={"Emergency","Send Message","Order Ready","Inventory Table","Orders Table"};
 				choice=JOptionPane.showOptionDialog(new JFrame(), " Which function would you like help with?","Help Button",JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE,null,options,0);
 				switch(choice)
 				{
@@ -471,6 +474,13 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 					case 2:
 						JOptionPane.showMessageDialog(this, "Select the row for the item that was completed. Then click the button.");
 						break;
+					case 3:
+						JOptionPane.showMessageDialog(this, "The table on the left shows the stock currently available in the restaurant.");
+						break;
+					case 4:
+						JOptionPane.showMessageDialog(this, "The table on the right shows the orders that have not been completed yet.Bolded orders should be completed \n first as the customer returned the item to be remade.");
+						break;
+						
 				}
 			
 				
@@ -482,15 +492,16 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			}
 		if(a==timer3)
 		{
+			/*
 			try {
 				
 				FillInventory(); 
 				FillWaitingOrders();
-		
-			} catch (SQLException e1) {
+			} catch (SQLException | NullPointerException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+			*/
 		}
 	}	
 	private void updateClock() {
@@ -503,7 +514,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
  * @returns Nothing, does changes to GUI.
  * 	
  */
-	private void FillWaitingOrders() throws SQLException 
+	public void FillWaitingOrders() throws SQLException 
 	{
 
 		
@@ -516,21 +527,32 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 
 		for(int i=0;i<Orders.length;i++)
 		{	
-		/*
-			int statusloc=7*(i)+4;
+		
+			int statusloc=7*(rowtemp2)+4;
+			
 			String status=Orders[statusloc];
+			
 			if(status.equals("RETURNED"))
 			{
-				
+				ModelOrders.setValueAt("<html><b>"+Orders[i]+"</b></html>", rowtemp2, 0);
+				i++;
+				ModelOrders.setValueAt("<html><b>"+Orders[i]+"</b></html>", rowtemp2, 1);
+				i++;
+				ModelOrders.setValueAt("<html><b>"+Orders[i]+"</b></html>", rowtemp2, 2);
+				i++;
+				ModelOrders.setValueAt("<html><b>"+Orders[i]+"</b></html>", rowtemp2, 3);
 			}
-		*/	
-			ModelOrders.setValueAt(Orders[i], rowtemp2, 0);
-			i++;
-			ModelOrders.setValueAt(Orders[i], rowtemp2, 1);
-			i++;
-			ModelOrders.setValueAt(Orders[i], rowtemp2, 2);
-			i++;
-			ModelOrders.setValueAt(Orders[i], rowtemp2, 3);
+			else
+			{
+				ModelOrders.setValueAt(Orders[i], rowtemp2, 0);
+				i++;
+				ModelOrders.setValueAt(Orders[i], rowtemp2, 1);
+				i++;
+				ModelOrders.setValueAt(Orders[i], rowtemp2, 2);
+				i++;
+				ModelOrders.setValueAt(Orders[i], rowtemp2, 3);
+			}
+			
 			i+=3;
 			rowtemp2++;
 			
@@ -563,7 +585,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	private void FillInventory() throws SQLException
 	{
 		
-		DefaultTableModel ModelInven=(DefaultTableModel)StockTable.getModel();
+		ModelInven=(DefaultTableModel)StockTable.getModel();
 	
 
 		try{
@@ -594,5 +616,9 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			
 		};
 
+	}
+	public int rowcountOrders()
+	{
+		return ModelOrders.getRowCount();
 	}
 }
