@@ -71,7 +71,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	public DefaultTableModel ModelCurr,ModelOrders, ModelInven;
 	public Queue<Order> Current;
 	public Queue<TableOrder> temp;
-	private NotificationGUI notification;
+	private NotificationGUI notification = new NotificationGUI(5, "Kitchen");
 	private KitchenStaffCommunicator commun;
 	public KitchenStaffGUI()
 	{
@@ -87,7 +87,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 
 		commun=new KitchenStaffCommunicator();
 		this.setTitle("KitchenStaff Interface");
-		notification = new NotificationGUI(5, "Kitchen");
+	
 		this.setResizable(true);
 		this.setSize(1200,700);
 		this.frameManipulation();
@@ -128,8 +128,8 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 
 		
 		try{
-			FillInventory();
-			FillWaitingOrders();
+				FillInventory();
+				FillWaitingOrders();
 			}
 			catch(SQLException | NullPointerException e)
 			{
@@ -517,9 +517,10 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	public void FillWaitingOrders() throws SQLException 
 	{
 
-		
+		try
+		{
 		ModelOrders=(DefaultTableModel)CurrentOrder.getModel();
-
+	
 		commun.CheckWaitingOrders();
 		String[] Orders=commun.getTableOrders();
 		int rows=Orders.length/7;
@@ -575,6 +576,11 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		{
 			ModelOrders.removeRow(i);
 		}
+		}
+		catch(NullPointerException e)
+		{
+			
+		}
 		
 	}
 	/*
@@ -584,9 +590,15 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 
 	private void FillInventory() throws SQLException
 	{
-		
-		ModelInven=(DefaultTableModel)StockTable.getModel();
-	
+		try
+		{
+			
+			ModelInven=(DefaultTableModel)StockTable.getModel();
+		}
+		catch(NullPointerException f)
+		{
+			
+		}
 
 		try{
 
@@ -611,7 +623,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		
 		
 		}
-		catch (SQLException e)
+		catch (SQLException | NullPointerException e)
 		{
 			
 		};
@@ -620,5 +632,13 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	public int rowcountOrders()
 	{
 		return ModelOrders.getRowCount();
+	}
+	public void end()
+	{
+		notification.close();
+		timer.stop();
+		timer3.stop();
+		commun.dis();
+		dispose();
 	}
 }

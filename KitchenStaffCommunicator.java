@@ -70,7 +70,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 				arrayindex++;
 			}
 
-			return InventoryName;
+	
 		}
 		
 		catch(SQLException e)
@@ -78,7 +78,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			
 		}
 		
-		return null;
+		return InventoryName;
 			
 	}
 /*
