@@ -295,7 +295,6 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		
 	}
 	
-	
 	/*
 	 *  This is just an error checking function.
 	 *  So if you have three ingredients for a MENUITEM and one ingredient makes it so that  the item cannot be made. 
