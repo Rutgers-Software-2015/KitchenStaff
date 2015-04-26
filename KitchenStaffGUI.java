@@ -492,7 +492,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			}
 		if(a==timer3)
 		{
-			/*
+			
 			try {
 				
 				FillInventory(); 
@@ -501,7 +501,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			*/
+			
 		}
 	}	
 	private void updateClock() {

@@ -264,6 +264,36 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		return updated;  // Return true if it passes through all of Ing are available.
 	}
 	
+	public boolean ingredientsExist(String[] Ing)
+	{
+		String[] AllI={" "};
+		try {
+			AllI = getInventoryName();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		for(int j=0;j<Ing.length;j++)
+		{
+			for(int k=0;k<AllI.length;k++)
+			{
+				
+				if(AllI[k].equals(Ing[j]))
+				{
+					break;
+				}
+				if((k==AllI.length-1))
+				{
+					return false;
+				}
+					
+			}
+		
+		}
+		return true;
+		
+	}
 	
 	
 	/*
@@ -274,21 +304,12 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	 */
 	public boolean Updateable(String[] Ing, int q) throws SQLException
 	{
-		String[] AllI=getInventoryName();
-		for(int j=0;j<Ing.length;j++)
+		
+		
+		if(!ingredientsExist(Ing))
 		{
-			for(int k=0;k<AllI.length;k++)
-			{
-				if(AllI[k].equals(Ing[j]))
-				{
-					break;
-				}
-			}
 			return false;
 		}
-		
-		
-		
 		ResultSet I = this.tell("select * FROM INVENTORY;");
 		boolean abletoupdate=true;
 		I.beforeFirst();
@@ -405,6 +426,8 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			String tempI[]=ParseIngredients(ing);
 			
 			// Checks if the menuItem can be made since the Inventory has been changed.
+			
+			
 			if(Updateable(tempI,q))
 			{
 				// Updating order so it can be made.
