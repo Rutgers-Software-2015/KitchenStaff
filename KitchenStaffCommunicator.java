@@ -10,7 +10,7 @@ import javax.swing.JOptionPane;
 
 import Shared.Communicator.DatabaseCommunicator;
 import Shared.Notifications.NotificationGUI;
-import Shared.Notifications.NotificationHandler;
+
 ;
 /* This file assists in helping the  KitchenStaff communicate with the database and execute functions.
  * @author Rahul Tandon
@@ -32,6 +32,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			this.connect("admin", "gradMay17");
 			this.tell("use MAINDB;");
 	}
+	
 	/*
 	 * Used to disconnect from the Database.
 	 * @return nothing.
@@ -39,10 +40,14 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	public void dis()
 	{
 		this.disconnect();
+		temp.close();
 	}
+	
 	/*
 	 * Gets the inventory ingredients names from the database
-	 * @returns the name of each of the inventory items in a String array
+ 		@return String Array
+		@param  none
+		@Exceptions = SQLException
 	 * 
 	 */
 	public String[] getInventoryName() throws SQLException
@@ -81,9 +86,13 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		return InventoryName;
 			
 	}
+	
 /*
  * Gets the inventory ingredients amounts from the database
-*  @returns the amount of each of the inventory items in a Integer array
+ * 
+ * 		@return Integer Array
+		@param  none
+		@Exceptions = SQLException
  */
 	public Integer[] getInventoryQ() throws SQLException
 	{	
@@ -125,9 +134,14 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		
 			
 	}
+	
 	/*
-	 * Input: The ingredient String for the MenuItem
-	 * @returns all the ingredients in an array. Parsed.
+	 * This function parses the inputed string and returns a String Array
+	 	
+	 	@return String Array
+		@param  
+			Ingredients: A single string containing all the Ingredients:String
+		@Exceptions = SQLException
 	 */
 	public String[] ParseIngredients(String Ingredients) throws SQLException
 	{
@@ -169,7 +183,14 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	}
 		
 	/*
-	 * Given the MENUID, rowid and quantity the system updates the order status
+	 * This function executes functions  to update the Inventory and the order status
+	 * 
+	 * 	@return boolean
+		@param  
+			MENUID: The id of the menuitem that is being 'readied'. :Integer
+			rowid: The id of the row in TABLE_ORDER that is being 'readied'.:Integer
+			q: Quantity of MenuItem being made:Integer
+		@Exceptions = SQLException
 	 */
 	public boolean getMenuItemIngredientsandUpdate(int MenuID,int rowid,int q) throws SQLException
 	{
@@ -222,14 +243,15 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			return true;
 			
 	}
+	
 	/*
-	 * Pass the Ingredients string from the Database. Parses string and puts it into 
-	 * a String array.
-	 * @return  String array with all the ingredients.
+	 * This function updates the Inventory based off the Ingredients in Ing and the quantity q.
+		@return boolean
+		@param  
+			Ing: A string array that contains the Ingredients that make up a particular MenuItem:String Array
+			q: Quantity of MenuItem being made:Integer
+		@Exceptions = SQLException
 	 */
-	
-	
-	
 	public boolean UpdateInventory(String Ing[],int q) throws SQLException
 	{
 
@@ -264,6 +286,15 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		return updated;  // Return true if it passes through all of Ing are available.
 	}
 	
+	/*
+			This function checks if the Ingredients to make the MenuItem, that is about to be readied, exist in our Inventory. If 
+			all the Ingredients to make the MenuItem exist, return true.
+			
+			@return boolean
+			@param  
+				Ing: A string array that contains the Ingredients that make up a particular MenuItem:String Array
+			@Exceptions = SQLException
+	*/
 	public boolean ingredientsExist(String[] Ing)
 	{
 		String[] AllI={" "};
@@ -300,6 +331,12 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	 *  So if you have three ingredients for a MENUITEM and one ingredient makes it so that  the item cannot be made. 
 	 *  The other ingredients should not be altered since the item was never made.
 	 *  returns true if the ingredients can be updated.
+	 *  
+	 *  @return boolean
+		@param  
+			Ing: A string array that contains the Ingredients that make up a particular MenuItem:String Array
+			q: Quantity of MenuItem being made:Integer
+		@Exceptions = SQLException
 	 */
 	public boolean Updateable(String[] Ing, int q) throws SQLException
 	{
@@ -338,9 +375,17 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	}
 
 	return abletoupdate;  // Return true if it passes through all of Ing are available.
-}
-
+	}
 	
+	/*
+	 * 		This function gets the information needed by the KitchenStaff for the orders that appear in the TABLE_ORDER database
+			table that arent ready. It gets the information for orders that still have to be completed and inserts them into an array. The array 
+			is then returned.
+			
+			@return String Array
+			@param  none
+			@Exceptions = SQLException
+	*/
 	public String[] getTableOrders() throws SQLException
 	{
 
@@ -406,9 +451,14 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 				return null;
 		
 	}
+	
 	/*
-	 * If Inventory was updated check if the waiting orders are satisfied. If the item can be made now
-	 * its status is now 'NOT_READY'. Also the items valid bit is now set to 1. 
+	 * 	This function checks the Orders that have a 'WAITING' status and checks if they can be completed
+	 *  due to any inventory updates.
+	 *  
+	 * 	@return none
+		@param  none
+		@Exceptions = SQLException
 	 */
 	public void CheckWaitingOrders() throws SQLException
 	{

@@ -17,9 +17,6 @@ import Shared.Notifications.NotificationGUI;
 
 public class KitchenStaffHandler 
 {
-	
-
-
 
 	/*
 	 * Constructor	
@@ -27,14 +24,16 @@ public class KitchenStaffHandler
 	public KitchenStaffHandler()
 	{
 
-	}
-
-	
-	
+	}	
 	/* 
-	 * The function  Does the  Order Ready Commands once the order ready button is clicked.
-	 *  @return Nothing
-	 */
+	 * This function  does the  Order Ready Commands once the order ready button is clicked.
+	 *		@return nothing
+	 *		@param  
+	 *			 rowselected: The rowselected in JTable :Integer 
+	 *			 q: The quantity in that same row: Integer
+	 *			 comm: A communicator to access the Database: KitchenStaffCommunicator
+	 *		@Exceptions = SQLException
+	*/
 
 	public static void OrderReady(int rowselected,int q,KitchenStaffCommunicator comm) throws SQLException
 	{
@@ -49,6 +48,16 @@ public class KitchenStaffHandler
 		comm.getMenuItemIngredientsandUpdate(MenuID,rowid,q);
 
 	}
+	/*
+	 * This function assists in sending emergencies to all employees.
+	@return boolean
+	@param  
+		 message: The message that is to be sent.: String 
+		 confirm: A confirmation bit checking to make sure the emergency should be sent.: Integer (0 or 1)
+		 n: A notificationGUI that allows you to communicate with other employees: NotificationGUI
+	@Exceptions = SQLException
+	
+	*/
 	public static boolean SendEmergency(String message,int confirm,NotificationGUI n)
 	{
 		if(confirm==1)
