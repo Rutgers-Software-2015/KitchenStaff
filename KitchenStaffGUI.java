@@ -17,12 +17,7 @@ import java.text.DateFormat;
 
 import java.util.Date;
 
-import java.util.Queue;
-
-
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -40,8 +35,7 @@ import javax.swing.*;
 
 
 import Login.LoginWindow;
-import Shared.ADT.*;
-import Shared.ADT.MenuItem;
+
 import Shared.Gradients.*;
 import Shared.Notifications.NotificationGUI;
 
@@ -69,8 +63,6 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 
 	private JPanel panel_3;
 	public DefaultTableModel ModelCurr,ModelOrders, ModelInven;
-	public Queue<Order> Current;
-	public Queue<TableOrder> temp;
 	private NotificationGUI notification = new NotificationGUI(5, "Kitchen");
 	private KitchenStaffCommunicator commun;
 	public KitchenStaffGUI()
@@ -113,6 +105,15 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 
 		this.setVisible(true);
 	}
+	
+	public void end()
+	{
+		notification.close();
+		timer.stop();
+		timer3.stop();
+		commun.dis();
+		dispose();
+	}
 
 	public void frameManipulation()
 	{
@@ -126,7 +127,6 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		setButtonPanel();
 		setRootPanel();
 
-		
 		try{
 				FillInventory();
 				FillWaitingOrders();
@@ -136,9 +136,6 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 				
 			};
 
-		
-		
-		
 	}
 	
 	private void setRootPanel()
@@ -308,13 +305,16 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 					dateAndTime.setFont(dateAndTime.getFont().deriveFont(28f));
 					dateAndTime.setBorder(BorderFactory.createLineBorder(Color.black));
 					updateClock();
+					
 					// Create a timer to update the clock
 					timer = new Timer(500,this);
 		            timer.setRepeats(true);
 		            timer.setCoalesce(true);
 		            timer.setInitialDelay(0);
 		            timer.start();
-		        	timer3 = new Timer(60000,this);
+		            
+		            // Create a timer to refill the TableOrders and Inventory.
+		        	timer3 = new Timer(30000,this);
 		            timer3.setRepeats(true);
 		            timer3.setCoalesce(true);
 		            timer3.setInitialDelay(0);
@@ -349,7 +349,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		OrderReadyButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		OrderReadyButton.setFocusPainted(false);
 		
-		// Set Request Refund Button // May edit later
+		// Set Help Button // May edit later
 		helpButton = new GradientButton("Help");
 		helpButton.addActionListener(this);
 		helpButton.setFont(helpButton.getFont().deriveFont(16.0f));
@@ -413,7 +413,6 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 							KitchenStaffHandler.SendEmergency(msg,0,notification);
 						break;
 					}
-				//SendMessage(msg,0); // 0 means all employees
 			}
 
 		if(a == OrderReadyButton)
@@ -448,13 +447,11 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 					}
 					
 				} 
-				catch (IndexOutOfBoundsException e1)
+				catch (SQLException|IndexOutOfBoundsException e1)
 				{
 					JOptionPane.showMessageDialog(this, "Please select a row.");
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				}
+				} 
 			}
 		    }
 			
@@ -482,14 +479,13 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 						break;
 						
 				}
-			
-				
 			}
 
 		if(a == timer)
 			{
 				updateClock();
 			}
+		
 		if(a==timer3)
 		{
 			
@@ -557,8 +553,6 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			i+=3;
 			rowtemp2++;
 			
-	
-			
 			if(ModelOrders.getRowCount()<rows)
 			{
 				ModelOrders.addRow(new Object[][] {
@@ -577,7 +571,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			ModelOrders.removeRow(i);
 		}
 		}
-		catch(NullPointerException e)
+		catch(SQLException | NullPointerException e)
 		{
 			
 		}
@@ -625,20 +619,9 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		}
 		catch (SQLException | NullPointerException e)
 		{
-			
+			JOptionPane.showMessageDialog(this, "No Orders are available.");
 		};
 
 	}
-	public int rowcountOrders()
-	{
-		return ModelOrders.getRowCount();
-	}
-	public void end()
-	{
-		notification.close();
-		timer.stop();
-		timer3.stop();
-		commun.dis();
-		dispose();
-	}
+
 }

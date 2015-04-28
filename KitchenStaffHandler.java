@@ -1,12 +1,7 @@
 package KitchenStaff;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.Queue;
 
-import Shared.ADT.*;
-import Shared.Communicator.DatabaseCommunicator;
 import Shared.Notifications.NotificationGUI;
 /*
  * This file helps run some functions of the KitchenStaff.
@@ -24,7 +19,8 @@ public class KitchenStaffHandler
 	public KitchenStaffHandler()
 	{
 
-	}	
+	}
+	
 	/* 
 	 * This function  does the  Order Ready Commands once the order ready button is clicked.
 	 *		@return nothing
@@ -34,7 +30,6 @@ public class KitchenStaffHandler
 	 *			 comm: A communicator to access the Database: KitchenStaffCommunicator
 	 *		@Exceptions = SQLException
 	*/
-
 	public static void OrderReady(int rowselected,int q,KitchenStaffCommunicator comm) throws SQLException
 	{
 		
@@ -48,6 +43,7 @@ public class KitchenStaffHandler
 		comm.getMenuItemIngredientsandUpdate(MenuID,rowid,q);
 
 	}
+	
 	/*
 	 * This function assists in sending emergencies to all employees.
 	@return boolean

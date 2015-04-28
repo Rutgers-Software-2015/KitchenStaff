@@ -1,5 +1,11 @@
 package KitchenStaff;
 
+/* This file assists in helping the  KitchenStaff communicate with the database and execute functions.
+ * @author Rahul Tandon
+ * @tester Rahul Tandon
+ * @debugger Rahul Tandon
+ */
+
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -11,12 +17,7 @@ import javax.swing.JOptionPane;
 import Shared.Communicator.DatabaseCommunicator;
 import Shared.Notifications.NotificationGUI;
 
-;
-/* This file assists in helping the  KitchenStaff communicate with the database and execute functions.
- * @author Rahul Tandon
- * @tester Rahul Tandon
- * @debugger Rahul Tandon
- **/
+
 public class KitchenStaffCommunicator extends DatabaseCommunicator
 
 {
