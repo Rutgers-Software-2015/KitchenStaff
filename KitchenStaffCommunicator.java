@@ -7,12 +7,9 @@ package KitchenStaff;
  */
 
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
-import javax.management.Notification;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+
 
 import Shared.Communicator.DatabaseCommunicator;
 import Shared.Notifications.NotificationGUI;
@@ -111,9 +108,6 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		
 		Integer[] InventoryQ=new Integer[rowcount];// Initialize
 		try{
-			
-			
-			ResultSetMetaData rsd = I.getMetaData();
 			
 			int arrayindex=0;
 			while(I.next())
@@ -226,11 +220,18 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			}
 			else
 			{
+				// Not enough inventory to complete order.
+				
 				String notvalid="UPDATE MENU set VALID=0 WHERE MENU_ID="+MenuID+";";
 				this.update(notvalid);
-				// Not enough inventory to complete order.
-				temp.sendMessage("Customer", "We could not process you order due to lack of stock.");
+				ResultSet itemname=this.tell("SELECT ITEM_NAME from MENU where MENU_ID="+MenuID+ ";");
+				String menuitem=itemname.getString("ITEM_NAME");
 				
+				// Alert Manager and Customer
+				temp.sendMessage("Customer", "We could not complete the "+menuitem+ "that you order due to low inventory.");
+				temp.sendMessage("Manager","We need more stock so we can make "+ menuitem);
+				
+				// Update the status to WAITING.
 				String sqlcommand="UPDATE TABLE_ORDER set CURRENT_STATUS ='WAITING' where rowid="+rowid+";"; 
 				this.update(sqlcommand);
 			}
@@ -342,11 +343,12 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	public boolean Updateable(String[] Ing, int q) throws SQLException
 	{
 		
-		
+		// Checking if all the Ingredients in Ing exist in the inventory.
 		if(!ingredientsExist(Ing))
 		{
 			return false;
 		}
+		
 		ResultSet I = this.tell("select * FROM INVENTORY;");
 		boolean abletoupdate=true;
 		I.beforeFirst();
@@ -358,7 +360,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			{
 		
 				int old=I.getInt("Amount");
-				int tempold=old;
+
 				old=old-q*1;
 				// Now must check if quantity is valid.
 				if(old<0)
@@ -394,9 +396,8 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		
 	//Getting rows in result set
 		int rowcount=0;
-		ResultSetMetaData rsd = TableOrder.getMetaData();
+
 		
-		int colsize=rsd.getColumnCount();
 		int arrayindex=0;
 		do
 		{
