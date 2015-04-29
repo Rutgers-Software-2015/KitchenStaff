@@ -119,7 +119,6 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	{
 		rootPanel = new JPanel();
 		rootPanel.setLayout(null);
-		notification = new NotificationGUI(1,"KitchenStaff");
 		rootPanel.add(notification);
 		setBackgroundPanel();
 		setTitlePanel();
