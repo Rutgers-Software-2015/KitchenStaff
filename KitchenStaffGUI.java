@@ -63,11 +63,12 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 
 	private JPanel panel_3;
 	public DefaultTableModel ModelCurr,ModelOrders, ModelInven;
-	private NotificationGUI notification = new NotificationGUI(5, "Kitchen");
+	private NotificationGUI notification;
 	private KitchenStaffCommunicator commun;
 	public KitchenStaffGUI()
 	{
 		super();
+		notification = new NotificationGUI(5, "Kitchen");
 		init();
 	}
 
@@ -77,7 +78,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		
 		//Used for testing till database is fully functioning.
 
-		commun=new KitchenStaffCommunicator();
+		commun=new KitchenStaffCommunicator(notification);
 		this.setTitle("KitchenStaff Interface");
 	
 		this.setResizable(true);
@@ -509,7 +510,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
  * @returns Nothing, does changes to GUI.
  * 	
  */
-	public void FillWaitingOrders() throws SQLException 
+	public void FillWaitingOrders()
 	{
 
 		
@@ -573,6 +574,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace(System.out);
 		}
 		
 	}
@@ -581,7 +583,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	 *  @returns nothing. 
 	 */
 
-	private void FillInventory() throws SQLException
+	private void FillInventory()
 	{
 
 
@@ -610,7 +612,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		}
 		catch (Exception e)
 		{
-
+			e.printStackTrace(System.out);
 		};
 
 	}

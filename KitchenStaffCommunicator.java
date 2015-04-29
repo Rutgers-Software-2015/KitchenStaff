@@ -25,15 +25,15 @@ import Shared.Notifications.NotificationGUI;
 public class KitchenStaffCommunicator extends DatabaseCommunicator
 
 {
-	private NotificationGUI Note=new NotificationGUI(5,"KitchenStaff");
+	private NotificationGUI Note;
 	
 	/*
 	 *  Constructor for Communicator. Establishes connection to the DB.
 	 *  @return nothing.
 	 */
-	public KitchenStaffCommunicator()
+	public KitchenStaffCommunicator(NotificationGUI n)
 	{
-
+			Note = n;
 			this.connect("admin", "gradMay17");
 			this.tell("use MAINDB;");
 	}
@@ -45,7 +45,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	public void dis()
 	{
 		this.disconnect();
-		Note.close();
+		
 	}
 	
 	/*
@@ -55,11 +55,11 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		@Exceptions = SQLException
 	 * 
 	 */
-	public String[] getInventoryName() throws SQLException
+	public String[] getInventoryName()
 	{	
 
 		ResultSet I = this.tell("select * FROM INVENTORY;");
-		
+		try{
 	//Getting rows in result set
 		int rowcount=0;
 		do
@@ -71,7 +71,6 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		I.beforeFirst();// Reset pointer to beginning of resultset.
 		
 		String[] InventoryName=new String[rowcount];// Initialize
-		try{
 	
 			int arrayindex=0;
 			while(I.next())
@@ -80,15 +79,15 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 				arrayindex++;
 			}
 
-	
+			return InventoryName;
 		}
 		
 		catch(Exception e)
 		{
-			
+			e.printStackTrace(System.out);
+			return null;
 		}
 		
-		return InventoryName;
 			
 	}
 	
@@ -97,13 +96,12 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
  * 
  * 		@return Integer Array
 		@param  none
-		@Exceptions = SQLException
  */
-	public Integer[] getInventoryQ() throws SQLException
+	public Integer[] getInventoryQ()
 	{	
-	
+		Integer[] InventoryQ = null;
 		ResultSet I = this.tell("select * FROM INVENTORY;");
-		
+		try{
 	//Getting rows in result set
 		int rowcount=0;
 		do
@@ -113,8 +111,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		}while(I.next());
 		I.beforeFirst();// Reset pointer to beginning of resultset.
 		
-		Integer[] InventoryQ=new Integer[rowcount];// Initialize
-		try{
+		InventoryQ=new Integer[rowcount];// Initialize
 			
 			int arrayindex=0;
 			while(I.next())
@@ -123,15 +120,15 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 				arrayindex++;
 			}
 			
-	
+			return InventoryQ;
 		}
 		
 		catch(Exception e)
 		{
-			
+			e.printStackTrace(System.out);
+			return null;
 		}
 
-		return InventoryQ;
 	
 		
 			
@@ -143,10 +140,12 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	 	@return String Array
 		@param  
 			Ingredients: A single string containing all the Ingredients:String
-		@Exceptions = SQLException
+
 	 */
-	public String[] ParseIngredients(String Ingredients) throws SQLException
+	public String[] ParseIngredients(String Ingredients)
 	{
+		String[] temp = null;
+		try{
 		String comma=",";
 		int index=0;// Index in the array we are returning.
 		int prevword=0; // Index at which the last ingredient ended.
@@ -163,7 +162,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			}	
 		
 		//Array we are returning
-			String[] temp=new String[count];
+			temp=new String[count];
 				
 		//Parsing the Ingredients
 			for(int i=0;i<Ingredients.length();i++)
@@ -181,7 +180,13 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 
 			}
 			
-		return temp;     // Return the Ingredients for the MENUItem.
+			return temp;// Return the Ingredients for the MENUItem.
+			
+		}catch(Exception e){
+			e.printStackTrace(System.out);
+			return null;
+		}
+			
 	}
 		
 	/*
@@ -194,7 +199,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			q: Quantity of MenuItem being made:Integer
 		@Exceptions = SQLException
 	 */
-	public boolean getMenuItemIngredientsandUpdate(int MenuID,int rowid,int q) throws SQLException
+	public boolean getMenuItemIngredientsandUpdate(int MenuID,int rowid,int q)
 	{
 		try{
 		
@@ -246,7 +251,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			}
 			catch(Exception e)
 			{
-				
+				e.printStackTrace(System.out);
 			};
 
 			return true;
@@ -261,11 +266,12 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			q: Quantity of MenuItem being made:Integer
 		@Exceptions = SQLException
 	 */
-	public boolean UpdateInventory(String Ing[],int q) throws SQLException
+	public boolean UpdateInventory(String Ing[],int q)
 	{
+		boolean updated=true;
 
+		try{
 			ResultSet I = this.tell("select * FROM INVENTORY;");
-			boolean updated=true;
 			I.beforeFirst();
 		for(int i=0; i<Ing.length;i++)
 		{
@@ -291,7 +297,10 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			
 			I.beforeFirst();
 		}
-	
+		}catch(Exception e){
+			e.printStackTrace(System.out);
+		}
+		
 		return updated;  // Return true if it passes through all of Ing are available.
 	}
 	
@@ -347,9 +356,8 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		@param  
 			Ing: A string array that contains the Ingredients that make up a particular MenuItem:String Array
 			q: Quantity of MenuItem being made:Integer
-		@Exceptions = SQLException
 	 */
-	public boolean Updateable(String[] Ing, int q) throws SQLException
+	public boolean Updateable(String[] Ing, int q)
 	{	
 		boolean abletoupdate=true;
 	try
@@ -391,7 +399,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	}
 	catch(Exception e)
 	{
-	
+		e.printStackTrace(System.out);
 	}
 		return abletoupdate; 
 
@@ -405,9 +413,9 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			
 			@return String Array
 			@param  none
-			@Exceptions = SQLException
+
 	*/
-	public String[] getTableOrders() throws SQLException
+	public String[] getTableOrders()
 	{
 		try
 		{
@@ -479,22 +487,31 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	 *  
 	 * 	@return none
 		@param  none
-		@Exceptions = SQLException
+
 	 */
-	public void CheckWaitingOrders() throws SQLException
+	public void CheckWaitingOrders()
 	{
 
 		try
 		{
 		ResultSet Waiting = this.tell("SELECT * FROM TABLE_ORDER where CURRENT_STATUS='WAITING';");
 		
+		if(Waiting!=null){
+			Waiting.first();
 		while(Waiting.next())
 		{
 			int menuid=Waiting.getInt("MENU_ITEM_ID");
 			int q=Waiting.getInt("QUANTITY");
 			int rowid=Waiting.getInt("rowid");
 			ResultSet temp=this.tell("select INGREDIENTS from MENU where MENU_ID="+menuid+";" );
-			String ing=temp.getString("INGREDIENTS");
+			if(temp != null){
+				temp.first();
+				String ing = null;
+				try{
+			ing=temp.getString("INGREDIENTS");
+				}catch(SQLException e){
+					e.printStackTrace(System.out);
+				}
 			String tempI[]=ParseIngredients(ing);
 			
 			// Checks if the menuItem can be made since the Inventory has been changed.
@@ -510,7 +527,9 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 				String valid="UPDATE MENU set VALID=1 WHERE MENU_ID="+menuid+";";
 				this.update(valid);
 			}
+			}
 			
+		}
 		}
 		}
 		catch(Exception e)
