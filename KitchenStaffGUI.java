@@ -433,7 +433,6 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 					int rowselected=CurrentOrder.getSelectedRow();
 					String qs=(String) CurrentOrder.getValueAt(rowselected, 2);
 					int q=Integer.parseInt(qs);
-					
 					// Have handler notify order is ready.
 					KitchenStaffHandler.OrderReady(rowselected,q,commun);
 

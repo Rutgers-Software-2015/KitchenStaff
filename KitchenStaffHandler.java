@@ -2,6 +2,7 @@ package KitchenStaff;
 
 import java.sql.SQLException;
 
+
 import Shared.Notifications.NotificationGUI;
 /*
  * This file helps run some functions of the KitchenStaff.
@@ -32,13 +33,11 @@ public class KitchenStaffHandler
 	*/
 	public static void OrderReady(int rowselected,int q,KitchenStaffCommunicator comm) throws SQLException
 	{
-		
 		String[] temp=comm.getTableOrders();
 
 		int idloc= 7*(rowselected)+5;           //Gets location of MENUID
 		int MenuID=Integer.parseInt(temp[idloc]); // Gets the MENUID value
 		int rowid=Integer.parseInt(temp[7*(rowselected)+6]); //gets row id of order
-		
 		//Get the ingredients and update inventory accordingly.
 		comm.getMenuItemIngredientsandUpdate(MenuID,rowid,q);
 

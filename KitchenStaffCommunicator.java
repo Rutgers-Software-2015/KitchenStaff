@@ -9,15 +9,6 @@ package KitchenStaff;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-
-
-
-
-
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
 import Shared.Communicator.DatabaseCommunicator;
 import Shared.Notifications.NotificationGUI;
 
@@ -202,13 +193,16 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	public boolean getMenuItemIngredientsandUpdate(int MenuID,int rowid,int q)
 	{
 		try{
-		
+
 
 			String sqlcomm = "SELECT * FROM MENU WHERE MENU_ID = " + MenuID+";"; 
 			ResultSet rs =  this.tell(sqlcomm);
+			
 			String I=rs.getString("INGREDIENTS");
+		
 			String Item=rs.getString("ITEM_NAME");
 			
+	
 	// Getting the tableid of that order.
 			String getTableid="SELECT TABLE_ID from TABLE_ORDER where rowid="+rowid+";";
 			ResultSet TID=this.tell(getTableid);
@@ -216,7 +210,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 
     // Getting the list of ingredients for an item.
 			String[] IngList=ParseIngredients(I);
-			
+		
 	// Checking if the Inventory is available to complete the order.
 			if(Updateable(IngList,q))
 			{
@@ -224,11 +218,10 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 				UpdateInventory(IngList,q);
 				String sqlcommand="UPDATE TABLE_ORDER set CURRENT_STATUS ='READY' where rowid="+rowid+";"; 
 				this.update(sqlcommand);
-				
-
+	
 				
 				// Need to get Name of employee based of ID.
-				//Note.sendMessage("Waiter", Item +" ready for Table "+tableid); //public message sent to waiter
+				Note.sendMessage("Waiter", Item +" ready for Table "+tableid); //public message sent to waiter
 			}
 			else
 			{
