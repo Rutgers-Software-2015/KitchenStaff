@@ -446,7 +446,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 					}
 					
 				} 
-				catch (SQLException|IndexOutOfBoundsException e1)
+				catch (Exception e1)
 				{
 					JOptionPane.showMessageDialog(this, "Please select a row.");
 					e1.printStackTrace();
