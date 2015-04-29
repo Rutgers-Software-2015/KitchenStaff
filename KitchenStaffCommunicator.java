@@ -228,7 +228,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 				String menuitem=itemname.getString("ITEM_NAME");
 				
 				// Alert Manager and Customer
-				Note.sendMessage("Customer", "We could not complete the "+menuitem+ "that you order due to low inventory.");
+				Note.sendMessage("Customer", "We could not complete the "+menuitem+ " that you order due to low inventory.");
 				Note.sendMessage("Manager","We need more stock so we can make "+ menuitem);
 				
 				// Update the status to WAITING.
@@ -365,7 +365,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 				// Now must check if quantity is valid.
 				if(old<0)
 				{				
-					Note.sendMessage("Manager","We do not have enough of"+Ing[i]+ "to complete the orders.");
+					Note.sendMessage("Manager","We do not have enough of "+Ing[i]+ " to complete the orders.");
 					abletoupdate= false;
 					break;
 				}
