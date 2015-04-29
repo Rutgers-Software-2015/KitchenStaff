@@ -11,6 +11,13 @@ import java.sql.SQLException;
 
 
 
+
+
+
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 import Shared.Communicator.DatabaseCommunicator;
 import Shared.Notifications.NotificationGUI;
 
@@ -76,7 +83,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	
 		}
 		
-		catch(SQLException e)
+		catch(Exception e)
 		{
 			
 		}
@@ -119,7 +126,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	
 		}
 		
-		catch(SQLException e)
+		catch(Exception e)
 		{
 			
 		}
@@ -216,7 +223,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 
 				
 				// Need to get Name of employee based of ID.
-				Note.sendMessage("Waiter", Item +" ready for Table "+tableid); //public message sent to waiter
+				//Note.sendMessage("Waiter", Item +" ready for Table "+tableid); //public message sent to waiter
 			}
 			else
 			{
@@ -237,7 +244,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			}
 			
 			}
-			catch(SQLException e)
+			catch(Exception e)
 			{
 				
 			};
@@ -300,9 +307,11 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	public boolean ingredientsExist(String[] Ing)
 	{
 		String[] AllI={" "};
-		try {
+		try 
+		{
 			AllI = getInventoryName();
-		} catch (SQLException e) {
+		}
+		catch (Exception e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -341,8 +350,10 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		@Exceptions = SQLException
 	 */
 	public boolean Updateable(String[] Ing, int q) throws SQLException
+	{	
+		boolean abletoupdate=true;
+	try
 	{
-		
 		// Checking if all the Ingredients in Ing exist in the inventory.
 		if(!ingredientsExist(Ing))
 		{
@@ -350,7 +361,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		}
 		
 		ResultSet I = this.tell("select * FROM INVENTORY;");
-		boolean abletoupdate=true;
+		
 		I.beforeFirst();
 	for(int i=0; i<Ing.length;i++)
 	{
@@ -376,8 +387,15 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		
 		I.beforeFirst();
 	}
+	
+	}
+	catch(Exception e)
+	{
+	
+	}
+		return abletoupdate; 
 
-	return abletoupdate;  // Return true if it passes through all of Ing are available.
+ // Return true if it passes through all of Ing are available.
 	}
 	
 	/*
@@ -393,7 +411,8 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	{
 		try
 		{
-		ResultSet TableOrder = this.tell("select * FROM TABLE_ORDER;");
+			
+		ResultSet TableOrder = this.tell("Select * FROM TABLE_ORDER;");
 		
 	//Getting rows in result set
 		int rowcount=0;
@@ -416,8 +435,6 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 		
 		String[] FullOrders=new String[rowcount];
 		TableOrder.beforeFirst();
-		
-				try{
 					
 					while(TableOrder.next())
 					{	
@@ -445,12 +462,8 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 				
 
 					return FullOrders;
-				}
-				
-				catch(SQLException e)
-				{
-					
-				}
+
+
 		}
 		catch(Exception e2)
 		{
@@ -471,7 +484,9 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	public void CheckWaitingOrders() throws SQLException
 	{
 
-		ResultSet Waiting = this.tell("select * FROM TABLE_ORDER where CURRENT_STATUS='WAITING'; ");
+		try
+		{
+		ResultSet Waiting = this.tell("SELECT * FROM TABLE_ORDER where CURRENT_STATUS='WAITING';");
 		
 		while(Waiting.next())
 		{
@@ -497,7 +512,13 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			}
 			
 		}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
 
 		
-	}
 }
+

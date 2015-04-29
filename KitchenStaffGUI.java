@@ -130,7 +130,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 				FillInventory();
 				FillWaitingOrders();
 			}
-			catch(SQLException | NullPointerException e)
+			catch(Exception e)
 			{
 				
 			};
@@ -512,11 +512,12 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 	public void FillWaitingOrders() throws SQLException 
 	{
 
+		
 		try
 		{
 		ModelOrders=(DefaultTableModel)CurrentOrder.getModel();
-	
 		commun.CheckWaitingOrders();
+		
 		String[] Orders=commun.getTableOrders();
 		int rows=Orders.length/7;
 		int rowtemp2=0;
@@ -572,7 +573,6 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		}
 		catch(Exception e)
 		{
-			
 		}
 		
 	}
@@ -583,19 +583,11 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 
 	private void FillInventory() throws SQLException
 	{
-		try
-		{
-			
-			ModelInven=(DefaultTableModel)StockTable.getModel();
-		}
-		catch(NullPointerException f)
-		{
-			
-		}
+
 
 		try{
 
-		
+			ModelInven=(DefaultTableModel)StockTable.getModel();
 		String[] InventoryName=commun.getInventoryName();
 		Integer[] InventoryQuant=commun.getInventoryQ();
 		int rows=InventoryName.length;
@@ -616,7 +608,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		
 		
 		}
-		catch (SQLException | NullPointerException e)
+		catch (Exception e)
 		{
 
 		};
