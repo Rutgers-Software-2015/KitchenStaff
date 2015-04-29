@@ -18,7 +18,7 @@ import Shared.Notifications.NotificationGUI;
 public class KitchenStaffCommunicator extends DatabaseCommunicator
 
 {
-	private NotificationGUI temp=new NotificationGUI(5,"KitchenStaff");
+	private NotificationGUI Note=new NotificationGUI(5,"KitchenStaff");
 	
 	/*
 	 *  Constructor for Communicator. Establishes connection to the DB.
@@ -38,7 +38,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	public void dis()
 	{
 		this.disconnect();
-		temp.close();
+		Note.close();
 	}
 	
 	/*
@@ -216,7 +216,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 
 				
 				// Need to get Name of employee based of ID.
-				temp.sendMessage("Waiter", Item +" ready for Table "+tableid); //public message sent to waiter
+				Note.sendMessage("Waiter", Item +" ready for Table "+tableid); //public message sent to waiter
 			}
 			else
 			{
@@ -228,8 +228,8 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 				String menuitem=itemname.getString("ITEM_NAME");
 				
 				// Alert Manager and Customer
-				temp.sendMessage("Customer", "We could not complete the "+menuitem+ "that you order due to low inventory.");
-				temp.sendMessage("Manager","We need more stock so we can make "+ menuitem);
+				Note.sendMessage("Customer", "We could not complete the "+menuitem+ "that you order due to low inventory.");
+				Note.sendMessage("Manager","We need more stock so we can make "+ menuitem);
 				
 				// Update the status to WAITING.
 				String sqlcommand="UPDATE TABLE_ORDER set CURRENT_STATUS ='WAITING' where rowid="+rowid+";"; 
@@ -365,7 +365,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 				// Now must check if quantity is valid.
 				if(old<0)
 				{				
-					temp.sendMessage("Manager","We do not have enough of"+Ing[i]+ "to complete the orders.");
+					Note.sendMessage("Manager","We do not have enough of"+Ing[i]+ "to complete the orders.");
 					abletoupdate= false;
 					break;
 				}
@@ -391,7 +391,8 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 	*/
 	public String[] getTableOrders() throws SQLException
 	{
-
+		try
+		{
 		ResultSet TableOrder = this.tell("select * FROM TABLE_ORDER;");
 		
 	//Getting rows in result set
@@ -450,6 +451,11 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 				{
 					
 				}
+		}
+		catch(Exception e2)
+		{
+			e2.printStackTrace();
+		}
 				return null;
 		
 	}

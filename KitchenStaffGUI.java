@@ -492,7 +492,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 				
 				FillInventory(); 
 				FillWaitingOrders();
-			} catch (SQLException | NullPointerException e1) {
+			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
@@ -570,7 +570,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 			ModelOrders.removeRow(i);
 		}
 		}
-		catch(SQLException | NullPointerException e)
+		catch(Exception e)
 		{
 			
 		}
@@ -618,7 +618,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 		}
 		catch (SQLException | NullPointerException e)
 		{
-			JOptionPane.showMessageDialog(this, "No Orders are available.");
+
 		};
 
 	}
