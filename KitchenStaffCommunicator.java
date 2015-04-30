@@ -215,7 +215,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			if(Updateable(IngList,q))
 			{
 				
-				UpdateInventory(IngList,q);
+				UpdateInventory(IngList,q,MenuID);
 				String sqlcommand="UPDATE TABLE_ORDER set CURRENT_STATUS ='READY' where rowid="+rowid+";"; 
 				this.update(sqlcommand);
 	
@@ -259,7 +259,7 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 			q: Quantity of MenuItem being made:Integer
 		@Exceptions = SQLException
 	 */
-	public boolean UpdateInventory(String Ing[],int q)
+	public boolean UpdateInventory(String Ing[],int q,int MenuID)
 	{
 		boolean updated=true;
 
@@ -282,7 +282,8 @@ public class KitchenStaffCommunicator extends DatabaseCommunicator
 						update(sqlcommand);
 						if(old==0)
 						{
-							// make function to change valid but in MENU.
+							String notvalid="UPDATE MENU set VALID=0 WHERE MENU_ID="+MenuID+";";
+							this.update(notvalid);
 						}
 				}
 				
