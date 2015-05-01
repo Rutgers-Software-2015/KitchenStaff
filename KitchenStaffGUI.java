@@ -536,7 +536,7 @@ public class KitchenStaffGUI  extends JFrame implements ActionListener {
 				i++;
 				ModelOrders.setValueAt("<html><b>"+Orders[i]+"</b></html>", rowtemp2, 1);
 				i++;
-				ModelOrders.setValueAt("<html><b>"+Orders[i]+"</b></html>", rowtemp2, 2);
+				ModelOrders.setValueAt(Orders[i], rowtemp2, 2);
 				i++;
 				ModelOrders.setValueAt("<html><b>"+Orders[i]+"</b></html>", rowtemp2, 3);
 			}
